@@ -1,4 +1,9 @@
-interface IItemAPI {
+export interface IListAPI {
+    total: number;
+    items: IItemAPI[];
+}
+
+export interface IItemAPI {
     id: string;
     description: string;
     image: string;
@@ -7,55 +12,29 @@ interface IItemAPI {
     price: number;
 }
 
-interface IListAPI {
-    total: number;
-    items: IItemAPI[];
+export interface ICatalog {
+    getAll(): IItemAPI[];
+    getItem: (id: string) => IItemAPI | null;
+    updateState(): Promise<void>;
 }
 
-interface IBasketModel {
-    items: Map<string, number>
-    add: (id: string) => void;
-    remove: (id: string) => void;
-    clear: () => void;
-}
-
-interface IBasketItem {
+export interface ICatalogItem {
+    id: string;
+    image: string;
     title: string;
+    category: string;
     price: number;
 }
 
-// const item: IItemAPI = {};
-// const basketItem: IBasketItem = item as IBasketItem;
-
-interface ICatalog {
-    items: IItemAPI[];
-    initItems: (items: IItemAPI[]) => void
-    getItem: (id: string) => IItemAPI | null
+export interface IBasket {
+    getItems(): IBasketItem[];
+    add(id: string): void;
+    remove(id: string): void;
+    updateState(): Promise<void>;
 }
 
-
-interface IEventEmitter {
-    emit: (event: string, data: unknown) => void;
-}
-
-interface IProduct {
+export interface IBasketItem {
     id: string;
     title: string;
-}
-
-interface CatalogModel {
-    items: IItemAPI[];
-    getItems: () => Promise<IListAPI>;
-    // setItems: (items: IItemAPI[]) => void;
-    // getProduct(id: string): IProduct;
-}
-
-interface IOrderForm1 {
-    payment: 'online' | 'offline';
-    address: string;
-}
-
-interface IOrderForm2 {
-    email: string;
-    phone: number;
+    price: number;
 }
