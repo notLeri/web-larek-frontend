@@ -1,5 +1,5 @@
 import { IItemAPI, IListAPI, IBasket, IBasketItem } from '../../types/index';
-import { productAPI } from './apiHandler';
+import { productAPI } from './ApiHandler';
 
 class Basket implements IBasket {
     constructor(

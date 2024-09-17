@@ -1,5 +1,5 @@
 import { IItemAPI, IListAPI, ICatalog } from '../../types/index';
-import { productAPI } from './apiHandler';
+import { productAPI } from './ApiHandler';
 
 class Catalog implements ICatalog {
     constructor(private items: IItemAPI[] = []) {}
