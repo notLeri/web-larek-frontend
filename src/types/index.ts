@@ -12,14 +12,10 @@ export interface IItemAPI {
     price: number;
 }
 
-export interface ICatalog {
-
-}
-
 export interface ICatalogModel {
-    getAll(): IItemAPI[];
-    getItem: (id: string) => IItemAPI | null;
-    updateState(): Promise<void>;
+    items: IItemAPI[];
+    setItems(items: IItemAPI[]): void;
+    getProduct(id: string): IItemAPI | null;
 }
 
 export interface ICatalogItem {
@@ -30,8 +26,7 @@ export interface ICatalogItem {
     price: number;
 }
 
-export interface IBasket {
-    getItems(): IBasketItem[];
+export interface IBasketModel {
     add(id: string): void;
     remove(id: string): void;
 }
@@ -48,4 +43,25 @@ export interface IApi {
     baseUrl: string;
     get<T>(uri: string): Promise<T>;
     post<T>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
+}
+
+export type EventName = string | RegExp;
+export type Subscriber = Function;
+export type EmitterEvent = {
+    eventName: string,
+    data: unknown
+};
+
+export interface IEvents {
+    on<T extends object>(event: EventName, callback: (data: T) => void): void;
+    emit<T extends object>(event: string, data?: T): void;
+    trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void;
+}
+
+export interface IViewConstructor {
+    new (container: HTMLElement, events?: IEvents): IView;
+}
+
+export interface IView {
+    render(data?: object): HTMLElement;
 }

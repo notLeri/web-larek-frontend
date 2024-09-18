@@ -1,4 +1,4 @@
-import { IEvents } from "../base/events";
+import { IEvents } from "../../types/index";
 import { Component } from "../base/Component";
 
 export class Modal <T> extends Component<T> {
