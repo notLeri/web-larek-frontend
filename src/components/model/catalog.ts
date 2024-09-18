@@ -1,7 +1,7 @@
-import { IItemAPI, IListAPI, ICatalog } from '../../types/index';
-import { productAPI } from './ApiHandler';
+import { IItemAPI, IListAPI, ICatalogModel } from '../../types/index';
+import { AppApi } from './AppApi';
 
-class Catalog implements ICatalog {
+class CatalogModel implements ICatalogModel {
     constructor(private items: IItemAPI[] = []) {}
 
     getAll(): IItemAPI[] {
@@ -13,12 +13,12 @@ class Catalog implements ICatalog {
     }
 
     updateState(): Promise<void> {
-        return productAPI.getProductList().then((list: IListAPI) => {
+        return AppApi.getProductList().then((list: IListAPI) => {
             this.items = list.items;
         });
     }
 }
 
-const catalog = new Catalog();
+const catalog = new CatalogModel();
 
 export { catalog };

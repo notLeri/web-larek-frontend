@@ -1,3 +1,6 @@
+import { IEvents } from "../base/events";
+import { Component } from "../base/Component";
+
 export class Modal <T> extends Component<T> {
     protected modal: HTMLElement;
     protected events: IEvents;

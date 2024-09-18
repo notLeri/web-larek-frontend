@@ -13,6 +13,10 @@ export interface IItemAPI {
 }
 
 export interface ICatalog {
+
+}
+
+export interface ICatalogModel {
     getAll(): IItemAPI[];
     getItem: (id: string) => IItemAPI | null;
     updateState(): Promise<void>;
@@ -30,11 +34,18 @@ export interface IBasket {
     getItems(): IBasketItem[];
     add(id: string): void;
     remove(id: string): void;
-    updateState(): Promise<void>;
 }
 
 export interface IBasketItem {
     id: string;
     title: string;
     price: number;
+}
+
+export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
+
+export interface IApi {
+    baseUrl: string;
+    get<T>(uri: string): Promise<T>;
+    post<T>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
 }
