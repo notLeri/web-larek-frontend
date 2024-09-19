@@ -7,7 +7,6 @@ import { CatalogModel } from './components/model/CatalogModel';
 import { BasketModel } from './components/model/BasketModel';
 import { BasketView } from './components/View/BasketView';
 import { BasketItemView } from './components/View/BasketItemView';
-import { IApi } from './types';
 import { API_URL, settings } from './utils/constants'
 
 const events = new EventEmitter();
@@ -19,12 +18,12 @@ const baseApi = new Api(API_URL, settings);
 const api = new AppApi(baseApi);
 
 function renderBasket(items: string[]) {
-    basketView.render(
-        items.map(id => {
-            const itemView = new BasketItemView(events);
-            return itemView.render(catalogModel.getProduct(id));
-        })
-    );
+    const basketItems = items.map(id => {
+        const item: HTMLElement = document.querySelector('.basket__item');
+        const itemView: BasketItemView = new BasketItemView(item, events);
+        return itemView.render(catalogModel.getProduct(id));
+    })
+    basketView.render({ items: basketItems });
 }
 
 events.on('basket:change', (event: { items: string[] }) => renderBasket(event.items));

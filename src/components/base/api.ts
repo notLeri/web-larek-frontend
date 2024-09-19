@@ -27,7 +27,7 @@ export class Api implements IApi {
 
     get<T>(uri: string) {
         return fetch(this.baseUrl + uri, {
-            ...this.options,
+            // ...this.options,
             method: 'GET'
         }).then(this.handleResponse<T>);
     }

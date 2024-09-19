@@ -8,13 +8,13 @@ export class BasketItemView implements IView {
     protected id: string | null = null
 
     constructor(protected container: HTMLElement, protected events: IEvents) {
-        this.title = document.querySelector('span');
-        this.addButton = document.querySelector('button');
-        this.removeButton = document.querySelector('button');
+        this.title = document.querySelector('card__title');
+        // this.addButton = document.querySelector('button');
+        this.removeButton = document.querySelector('basket__item-delete');
 
-        this.addButton.addEventListener('click', () => {
-            this.events.emit('ui:basket-add', { id: this.id });
-        });
+        // this.addButton.addEventListener('click', () => {
+        //     this.events.emit('ui:basket-add', { id: this.id });
+        // });
 
         this.addButton.addEventListener('click', () => {
             this.events.emit('ui:basket-remove', { id: this.id });

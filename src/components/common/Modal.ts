@@ -19,12 +19,12 @@ export class Modal <T> extends Component<T> {
     }
   
     open() {
-        this.container.classList.add("popup_is-opened");
+        this.container.classList.add("modal_active");
         document.addEventListener("keyup", this.handleEscUp);
     }
   
     close() {
-        this.container.classList.remove("popup_is-opened");
+        this.container.classList.remove("modal_active");
         document.removeEventListener("keyup", this.handleEscUp);
     }
   
