@@ -8,9 +8,11 @@ export interface IItemAPI {
     description: string;
     image: string;
     title: string;
-    category: string;
-    price: number;
+    category: TCategory;
+    price: number | null;
 }
+
+export type TCategory = 'софт-скил' | 'другое' | 'дополнительное' | 'кнопка' | 'хард-скил';
 
 export interface ICatalogModel {
     items: IItemAPI[];

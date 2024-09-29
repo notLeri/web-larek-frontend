@@ -1,5 +1,7 @@
+export type OrderPayment = "online" | "offline";
+
 export interface Order {
-    payment: "online" | "offline",
+    payment: OrderPayment,
     email: string,
     phone: string,
     address: string,
@@ -17,7 +19,7 @@ export type ErrorResult = {
 }
 
 export interface IOrderFormPaymentAddress {
-    payment: 'online' | 'offline';
+    payment: OrderPayment;
     address: string;
 }
 

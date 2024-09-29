@@ -1,10 +1,14 @@
-import { IBasketModel } from '../../types/index';
+import { IBasketModel, IItemAPI } from '../../types/index';
 import { IEvents } from '../../types/index';
+import { CatalogModel } from './CatalogModel';
 
 export class BasketModel implements IBasketModel {
     private items: Map<string, number> = new Map();
 
-    constructor(protected events: IEvents) {}
+    constructor(
+        protected events: IEvents,
+        private readonly catalogModel: CatalogModel
+    ) {}
 
     public add(id: string): void {
         if (!this.items.has(id)) this.items.set(id, 0);
@@ -30,6 +34,26 @@ export class BasketModel implements IBasketModel {
     }
 
     get products(): Map<string, number> {
-        return this.items
+        return this.items;
+    }
+
+    get fullProducts(): Record<string, IItemAPI> {
+        const fullProducts: Record<string, IItemAPI> = {};
+
+        for (const [key] of this.items) {
+            fullProducts[key] = this.catalogModel.getProduct(key)
+        }
+
+        return fullProducts;
+    }
+
+    get fullProductsArr(): IItemAPI[] {
+        return Object.values(this.fullProducts);
+    }
+
+    get price(): number {
+        return this.fullProductsArr.reduce((acc, { price }) => {
+            return acc + (price === null ? 0 : price);
+        }, 0);
     }
 }

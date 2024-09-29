@@ -1,18 +1,18 @@
-import { IEvents } from "../../types/index";
 import { IItemAPI } from "../../types/index";
+import { EventEmitter } from "../base/events";
 
 export class Modal {
     protected modal: HTMLElement;
-    protected events: IEvents;
+    protected events: EventEmitter;
     protected contentContainer: HTMLElement;
     protected container: HTMLElement;
 
-    constructor(container: HTMLElement, events: IEvents) {
+    constructor(container: HTMLElement, events: EventEmitter) {
         this.container = container;
         this.events = events;
         const closeButtonElement = this.container.querySelector(".modal__close");
         closeButtonElement.addEventListener("click", this.close.bind(this));
-        this.container.addEventListener("mousedown", (evt) => {
+        this.container.addEventListener("pointerdown", (evt) => {
             if (evt.target === evt.currentTarget) {
                 this.close();
             }

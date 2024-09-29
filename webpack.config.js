@@ -3,6 +3,7 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const { DefinePlugin } = require('webpack');
 const TerserPlugin = require("terser-webpack-plugin");
 
@@ -39,6 +40,12 @@ const config = {
       'process.env.DEVELOPMENT': !isProduction,
       'process.env.API_ORIGIN': JSON.stringify(process.env.API_ORIGIN ?? ''),
       'process.env.API_TOKEN': JSON.stringify(process.env.API_TOKEN ?? '')
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        // Копируем все файлы из src/images в dist/images без изменения имен
+        { from: "src/images", to: "images" }
+      ]
     })
   ],
   module: {
@@ -66,7 +73,7 @@ const config = {
       },
       {
         test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
-        type: "asset",
+        type: "asset/resource",
       },
 
       // Add your rules for custom modules here

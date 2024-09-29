@@ -36,17 +36,14 @@ export class AppApi {
 	}
 
     getProductList(): Promise<IListAPI> {
-        return this._baseApi.get<IListAPI>(`/product`)
-        .then((APIList: IListAPI) => APIList);
+        return this._baseApi.get<IListAPI>(`/product`);
     }
 
     getProductItem(itemId: string): Promise<IItemAPI> {
-        return this._baseApi.get<IItemAPI>(`/product/${itemId}`)
-        .then((product: IItemAPI) => product);
+        return this._baseApi.get<IItemAPI>(`/product/${itemId}`);
     }
 
     order(order: Order): Promise<SuccessResult | ErrorResult> {
-        return this._baseApi.post<SuccessResult | ErrorResult>(`/order`, order)
-        .then((res: SuccessResult | ErrorResult) => res);
+        return this._baseApi.post<SuccessResult | ErrorResult>(`/order`, order);
     }
 }

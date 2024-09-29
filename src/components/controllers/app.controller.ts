@@ -6,19 +6,22 @@ import { ModalProduct } from "../modalWindows/ModalProduct";
 import { AppApi } from "../model/AppApi";
 import { BasketModel } from "../model/BasketModel";
 import { CatalogModel } from "../model/CatalogModel";
-import { BasketItemView } from "../View/BasketItemView";
-// import { BasketView } from "../View/BasketView";
 import { CatalogItemView } from "../View/CatalogItemView";
 import { ModalBasket } from "../modalWindows/ModalBasket";
+import { ModalOrder } from "../modalWindows/ModalOrder";
+import { OrderModel } from "../model/OrderModel";
+import { ModalContacts } from "../modalWindows/ModalContacts";
 
 export class AppControler {
     private events: EventEmitter;
     private catalogModel: CatalogModel;
     private basketModel: BasketModel;
-    // private basketView: BasketView;
+    private orderModel: OrderModel;
     private api: AppApi;
     private productModal: ModalProduct;
     private basketModal: ModalBasket;
+    private orderModal: ModalOrder;
+    private contactsModal: ModalContacts;
     private nodes: { 
         modalContainer: HTMLElement;
         catalogCardTemplate: HTMLTemplateElement;
@@ -32,8 +35,8 @@ export class AppControler {
     constructor() {
         this.events = new EventEmitter();
         this.catalogModel = new CatalogModel(this.events);
-        this.basketModel = new BasketModel(this.events);
-        // this.basketView = new BasketView(document.querySelector('.basket'));
+        this.basketModel = new BasketModel(this.events, this.catalogModel);
+        this.orderModel = new OrderModel();
 
         const baseApi = new Api(API_URL, settings);
         this.api = new AppApi(baseApi);
@@ -49,8 +52,10 @@ export class AppControler {
 
         this.productModal = new ModalProduct(this.nodes.modalContainer, this.events, this.basketModel);
         this.basketModal = new ModalBasket(this.nodes.modalContainer, this.events, this.basketModel, this.api);
+        this.orderModal = new ModalOrder(this.nodes.modalContainer, this.events, this.orderModel);
+        this.contactsModal = new ModalContacts(this.nodes.modalContainer, this.events, this.orderModel);
 
-        this.nodes.basketButton.addEventListener("mousedown", () => {
+        this.nodes.basketButton.addEventListener("click", () => {
            this.events.emit('modalBasket:open');
         });
     }
@@ -92,6 +97,18 @@ export class AppControler {
         this.events.on('modalBasket:open', () => {
             this.basketModal.open();
         });
+
+        this.events.on('modalOrder:open', () => {
+            this.orderModal.open();
+        })
+        
+        this.events.on('modalContacts:open', () => {
+            this.contactsModal.open();
+        })
+
+        this.events.on('modalConfirm:open', () => {
+            
+        })
 
         this.events.on('initialData:loaded', () => {
             const productArray = this.catalogModel.items.map((item) => {

@@ -1,7 +1,9 @@
 import { Modal } from '../common/Modal';
-import { IEvents, IItemAPI } from '../../types';
+import { IItemAPI } from '../../types';
 import { IBasketModel } from '../../types';
 import { cloneTemplate } from '../../utils/utils';
+import { categoryCSSClasses } from '../../utils/constants';
+import { EventEmitter } from '../base/events';
 
 export class ModalProduct extends Modal{
     private titleElement: HTMLHeadingElement;
@@ -12,7 +14,7 @@ export class ModalProduct extends Modal{
     private buttonElement: HTMLButtonElement;
     private cardFullElement: HTMLElement;
 
-    constructor (container: HTMLElement, events: IEvents, private basket: IBasketModel) {
+    constructor (container: HTMLElement, events: EventEmitter, private basket: IBasketModel) {
         super(container, events);
     }
 
@@ -51,28 +53,8 @@ export class ModalProduct extends Modal{
         
         this.categoryElement.classList.remove('card__category_other');
 
-        switch (data.category) {
-            case 'софт-скил': {
-                this.categoryElement.classList.add('card__category_soft');
-                break;
-            }
-            case 'другое': { 
-                this.categoryElement.classList.add('card__category_other');
-                break;
-            }
-            case 'дополнительное': {
-                this.categoryElement.classList.add('card__category_additional');
-                break;
-            }
-            case 'кнопка': {
-                this.categoryElement.classList.add('card__category_button');
-                break;
-            }
-            case 'хард-скил': {
-                this.categoryElement.classList.add('card__category_hard');
-                break;
-            }
-        }
+        const categoryCSSClass = categoryCSSClasses[data.category]
+        this.categoryElement.classList.add(categoryCSSClass);
 
         this.renderButtonText(data);
 

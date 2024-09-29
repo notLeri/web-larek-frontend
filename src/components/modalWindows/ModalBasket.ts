@@ -1,60 +1,87 @@
-import { IBasketModel, IEvents, IItemAPI } from '../../types';
+import { IItemAPI } from '../../types';
 import { cloneTemplate } from '../../utils/utils';
+import { EventEmitter } from '../base/events';
 import { Modal } from '../common/Modal';
 import { AppApi } from '../model/AppApi';
+import { BasketModel } from '../model/BasketModel';
 
 export class ModalBasket extends Modal {
     private basketElement: HTMLElement;
     private basketList: HTMLElement;
+    private basketPriceElement: HTMLElement;
+    private basketSubmitButton: HTMLButtonElement;
 
-    constructor(container: HTMLElement, events: IEvents, private basket: IBasketModel, private api: AppApi) {
+    constructor(
+        container: HTMLElement,
+        events: EventEmitter,
+        private basketModel: BasketModel,
+        private api: AppApi
+    ) {
         super(container, events);
     }
 
     override open(): void {
+        this.render();
+        super.open();
+    }
+
+    private render(): void {
         this.basketElement = cloneTemplate('#basket');
-        this.basketList = document.querySelector('.basket__list');
+        this.basketList = this.basketElement.querySelector('.basket__list');
+        this.basketPriceElement = this.basketElement.querySelector('.basket__price');
+        this.basketSubmitButton = this.basketElement.querySelector('.basket__button');
         this.contentContainer.textContent = '';
         this.contentContainer.appendChild(this.basketElement);
 
-        this.renderProductList(this.basket.products);
-        super.open();
+        this.basketSubmitButton.addEventListener('click', this.placeOrder);
+
+        this.renderProductList();
     }
 
-    public renderProductList(items: Map<string, number>): void {
-        const itemsArray = Array.from(items)
-        itemsArray.forEach(item => {
-            const productData = this.api.getProductItem(item[0])
-            
-            this.renderProduct(productData)
-        })
+    private renderDisableStatusButton(): void {
+        this.basketSubmitButton.disabled = this.basketModel.price === 0;
+    }
+
+    private placeOrder = (): void => {
+        this.events.emit('modalOrder:open');
+    }
+
+    private renderProductList(): void {
+        this.basketList.textContent = '';
         
-        super.open();
-    }
-
-    private renderProduct(productData: Promise<IItemAPI>): void {
-        const cardTemplate = cloneTemplate('#card-basket');
-        const cardIndex = cardTemplate.querySelector('.basket__item-index');
-        const cardTitle = cardTemplate.querySelector('.card__title');
-        const cardPrice = cardTemplate.querySelector('.card__price');
-        const cardDelete = cardTemplate.querySelector('.basket__item-delete');
-
-
-        // this.basketList.appendChild();
-    }
-    
-    private handleSubmit(): void {
+        const fullProducts = this.basketModel.fullProductsArr;
         
-    }
-
-    private _changed(): void {
+        for (let i = 0; i < fullProducts.length; i++) {
+            this.renderProduct(i + 1, fullProducts[i]);
+        }
         
+        this.renderBasketPrice();
+        this.renderDisableStatusButton();
     }
 
-    private calculatePrice(numbers: number[]): number {
-        const sum = numbers.reduce(function(a: number, b: number){
-            return a + b;
-        }, 0);
-        return sum
+    private renderProduct(index: number, productData: IItemAPI): void {
+        const basketItem = cloneTemplate('#card-basket');
+
+        const cardIndex = basketItem.querySelector('.basket__item-index');
+        const cardTitle = basketItem.querySelector('.card__title');
+        const cardPrice = basketItem.querySelector('.card__price');
+        const cardDelete = basketItem.querySelector('.basket__item-delete');
+        const price = productData.price === null ? 'Бесценно' : `${productData.price} синапсов`;
+
+        cardIndex.textContent = `${index}`;
+        cardTitle.textContent = productData.title;
+        cardPrice.textContent = `${price}`;
+
+        cardDelete.addEventListener('click', () => this.handleDeleteItem(productData.id))
+         this.basketList.appendChild(basketItem);
+    }
+
+    private renderBasketPrice(): void {
+        this.basketPriceElement.textContent = `${this.basketModel.price} синапсов`;
+    }
+
+    private handleDeleteItem = (id: string): void => {
+        this.basketModel.remove(id);
+        this.renderProductList();
     }
 }

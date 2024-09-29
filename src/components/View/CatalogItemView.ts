@@ -51,13 +51,10 @@ export class CatalogItemView implements IView {
                 }
             }
 
-            // this.image.src = data.image;
+            this.image.src = `./images${data.image}`;
 
-            if (!data.price) {
-                this.price.textContent = 'Бесценно';
-            } else {
-                this.price.textContent = `${data.price} синапсов`;
-            }
+            const price = data.price === null ? 'Бесценно' : `${data.price} синапсов`;
+            this.price.textContent = `${price}`;
         }
         return this.container;
     }
