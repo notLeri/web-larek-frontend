@@ -1,4 +1,4 @@
-import { IItemAPI, IListAPI, IBasketItem } from './index';
+import { IBasketItem } from './index';
 import { IOrderFormPaymentAddress, IOrderFormMailPhone } from './order';
 
 export interface IBasket {

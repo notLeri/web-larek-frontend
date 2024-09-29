@@ -26,9 +26,11 @@ export interface ICatalogItem {
     price: number;
 }
 
-export interface IBasketModel {
-    add(id: string): void;
-    remove(id: string): void;
+export interface IBasketModel<T = string> {
+    add(item: T): void;
+    remove(item: T): void;
+    has(item: T): boolean;
+    get products(): Map<string, number>;
 }
 
 export interface IBasketItem {
@@ -56,10 +58,6 @@ export interface IEvents {
     on<T extends object>(event: EventName, callback: (data: T) => void): void;
     emit<T extends object>(event: string, data?: T): void;
     trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void;
-}
-
-export interface IViewConstructor {
-    new (container: HTMLElement, events?: IEvents): IView;
 }
 
 export interface IView {

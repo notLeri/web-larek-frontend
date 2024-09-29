@@ -1,6 +1,7 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "Web-Larek",
+    "short_name": "Web-Larek",
+    "description": "Online shop for practice.",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",

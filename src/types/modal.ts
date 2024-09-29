@@ -1,5 +1,5 @@
 export interface IModal {
-    open(): void;
+    open(id?: string): void;
     close(): void;
     handleEscUp (evt: KeyboardEvent): void;
 }

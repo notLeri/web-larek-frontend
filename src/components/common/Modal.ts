@@ -1,14 +1,16 @@
 import { IEvents } from "../../types/index";
-import { Component } from "../base/Component";
+import { IItemAPI } from "../../types/index";
 
-export class Modal <T> extends Component<T> {
+export class Modal {
     protected modal: HTMLElement;
     protected events: IEvents;
+    protected contentContainer: HTMLElement;
+    protected container: HTMLElement;
 
     constructor(container: HTMLElement, events: IEvents) {
-        super(container);
+        this.container = container;
         this.events = events;
-        const closeButtonElement = this.container.querySelector(".popup__close");
+        const closeButtonElement = this.container.querySelector(".modal__close");
         closeButtonElement.addEventListener("click", this.close.bind(this));
         this.container.addEventListener("mousedown", (evt) => {
             if (evt.target === evt.currentTarget) {
@@ -16,9 +18,12 @@ export class Modal <T> extends Component<T> {
             }
         });
         this.handleEscUp = this.handleEscUp.bind(this);
+
+       this.contentContainer = this.container.querySelector('.modal__content');
     }
   
-    open() {
+
+    open(ApiItem?: IItemAPI) {
         this.container.classList.add("modal_active");
         document.addEventListener("keyup", this.handleEscUp);
     }
