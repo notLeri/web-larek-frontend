@@ -34,9 +34,7 @@ export class ModalContacts extends Modal {
         this.formInputPhoneElement = this.formContactsElement.querySelector('.form__input[name=phone]');
         this.formSubmitButtonElement = this.formContactsElement.querySelector('.button[type=submit]');
         this.formErrorsElement = this.formContactsElement.querySelector('.form__errors');
-
         this.contentContainer.textContent = '';
-        
         this.contentContainer.appendChild(this.formContactsElement);
 
         this.validateForm();
