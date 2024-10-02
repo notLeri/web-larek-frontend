@@ -1,4 +1,4 @@
-import { AppControler } from './components/controllers/app.controller';
+import { AppControler } from './components/controllers/app.presenter';
 import './scss/styles.scss';
 
 const appControler = new AppControler();
