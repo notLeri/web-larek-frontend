@@ -3,7 +3,7 @@ import { EventEmitter } from '../base/events';
 import { Modal } from '../common/Modal'
 import { OrderModel } from '../model/OrderModel';
 
-export class ModalSuccess extends Modal {
+export class ModalConfirm extends Modal {
     orderSuccessElement: HTMLElement;
     orderSuccessDescriptionElement: HTMLParagraphElement;
     orderSuccessBtnElement: HTMLButtonElement;
@@ -18,22 +18,21 @@ export class ModalSuccess extends Modal {
 
     override open(): void {
         this.render();
-        this.open();
+        super.open();
     }
 
     override close(): void {
-        this.orderModel.resetOrder();
         super.close();
     }
 
     private render(): void {
-        this.orderSuccessElement = cloneTemplate('.success');
+        this.orderSuccessElement = cloneTemplate('#success');
         this.orderSuccessDescriptionElement = this.orderSuccessElement.querySelector('.order-success__description');
         this.orderSuccessBtnElement = this.orderSuccessElement.querySelector('.order-success__close');
         this.contentContainer.textContent = '';
         this.contentContainer.appendChild(this.orderSuccessElement);
         
-        this.orderSuccessDescriptionElement.textContent = `Списано ${'smth'} синапсов`;
+        this.orderSuccessDescriptionElement.textContent = `Списано ${this.orderModel.price} синапсов`;
         this.orderSuccessBtnElement = this.orderSuccessElement.querySelector('.order-success__close');
         this.orderSuccessBtnElement.addEventListener('click', this.handleClick)
     }

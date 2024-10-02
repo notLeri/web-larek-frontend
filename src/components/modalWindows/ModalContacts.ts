@@ -77,11 +77,11 @@ export class ModalContacts extends Modal {
     }
 
     private changePhone = (): void => {
-        this.orderModel.addPhone(this.formInputEmailElement.value);
+        this.orderModel.addPhone(this.formInputPhoneElement.value);
         this.validateForm();
     }
 
-    private submitForm(event: Event): void {
+    private submitForm = (event: Event): void => {
         event.preventDefault();
         this.events.emit('modalConfirm:open');
     }

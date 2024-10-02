@@ -1,4 +1,4 @@
-import { Order, SuccessResult, ErrorResult } from '../../types/order';
+import { IOrder, SuccessResult, ErrorResult } from '../../types/order';
 import { IListAPI, IItemAPI, IApi } from '../../types/index';
 
 // class AppApi {
@@ -43,7 +43,7 @@ export class AppApi {
         return this._baseApi.get<IItemAPI>(`/product/${itemId}`);
     }
 
-    order(order: Order): Promise<SuccessResult | ErrorResult> {
+    order(order: IOrder): Promise<SuccessResult | ErrorResult> {
         return this._baseApi.post<SuccessResult | ErrorResult>(`/order`, order);
     }
 }

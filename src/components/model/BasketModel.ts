@@ -37,6 +37,10 @@ export class BasketModel implements IBasketModel {
         return this.items;
     }
 
+    get productsID(): string[] {
+        return Array.from(this.items.keys());
+    }
+
     get fullProducts(): Record<string, IItemAPI> {
         const fullProducts: Record<string, IItemAPI> = {};
 

@@ -4,6 +4,7 @@ import { EventEmitter } from '../base/events';
 import { Modal } from '../common/Modal';
 import { AppApi } from '../model/AppApi';
 import { BasketModel } from '../model/BasketModel';
+import { OrderModel } from '../model/OrderModel';
 
 export class ModalBasket extends Modal {
     private basketElement: HTMLElement;
@@ -15,6 +16,7 @@ export class ModalBasket extends Modal {
         container: HTMLElement,
         events: EventEmitter,
         private basketModel: BasketModel,
+        private orderModel: OrderModel,
         private api: AppApi
     ) {
         super(container, events);
@@ -44,6 +46,7 @@ export class ModalBasket extends Modal {
 
     private placeOrder = (): void => {
         this.events.emit('modalOrder:open');
+        this.orderModel.addItems(this.basketModel.productsID, this.basketModel.price);
     }
 
     private renderProductList(): void {

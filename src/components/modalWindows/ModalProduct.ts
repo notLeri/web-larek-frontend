@@ -47,8 +47,8 @@ export class ModalProduct extends Modal{
 
         this.titleElement.textContent = data.title;
         this.descriptionElement.textContent = data.description;
-        this.priceElement.textContent = `${data.price} синапсов`;
-        // this.imageElement.src = `<%=require('../images${data.image}')%>`;
+        this.priceElement.textContent = data.price ===  null ? 'Бесценно' : `${data.price} синапсов`;
+        this.imageElement.src = `./images${data.image}`;
         this.categoryElement.textContent = data.category
         
         this.categoryElement.classList.remove('card__category_other');

@@ -1,6 +1,6 @@
 export type OrderPayment = "online" | "offline";
 
-export interface Order {
+export interface IOrder {
     payment: OrderPayment,
     email: string,
     phone: string,

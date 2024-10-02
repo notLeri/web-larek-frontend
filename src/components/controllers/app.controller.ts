@@ -11,6 +11,7 @@ import { ModalBasket } from "../modalWindows/ModalBasket";
 import { ModalOrder } from "../modalWindows/ModalOrder";
 import { OrderModel } from "../model/OrderModel";
 import { ModalContacts } from "../modalWindows/ModalContacts";
+import { ModalConfirm } from "../modalWindows/ModalConfirm";
 
 export class AppControler {
     private events: EventEmitter;
@@ -22,6 +23,7 @@ export class AppControler {
     private basketModal: ModalBasket;
     private orderModal: ModalOrder;
     private contactsModal: ModalContacts;
+    private confirmModal: ModalConfirm;
     private nodes: { 
         modalContainer: HTMLElement;
         catalogCardTemplate: HTMLTemplateElement;
@@ -51,9 +53,10 @@ export class AppControler {
         };
 
         this.productModal = new ModalProduct(this.nodes.modalContainer, this.events, this.basketModel);
-        this.basketModal = new ModalBasket(this.nodes.modalContainer, this.events, this.basketModel, this.api);
+        this.basketModal = new ModalBasket(this.nodes.modalContainer, this.events, this.basketModel, this.orderModel, this.api);
         this.orderModal = new ModalOrder(this.nodes.modalContainer, this.events, this.orderModel);
         this.contactsModal = new ModalContacts(this.nodes.modalContainer, this.events, this.orderModel);
+        this.confirmModal = new ModalConfirm(this.nodes.modalContainer, this.events, this.orderModel);
 
         this.nodes.basketButton.addEventListener("click", () => {
            this.events.emit('modalBasket:open');
@@ -69,17 +72,8 @@ export class AppControler {
         this.fetchProductList();
     }
 
-    // private renderBasket(items: string[]): void {
-    //     const basketItems = items.map(id => {
-    //         const item: HTMLElement = document.querySelector('.basket__item');
-    //         const itemView: BasketItemView = new BasketItemView(item, this.events);
-    //         return itemView.render(this.catalogModel.getProduct(id));
-    //     })
-    //     this.basketView.render({ items: basketItems });
-    // }
-
     private changeHeaderBasketQuantity(items: string[]): void {
-        this.nodes.headerBasketCounterElement.textContent = `${items.length}`
+        this.nodes.headerBasketCounterElement.textContent = `${items.length}`;
     }
 
     private listenEvents() {
@@ -100,15 +94,19 @@ export class AppControler {
 
         this.events.on('modalOrder:open', () => {
             this.orderModal.open();
-        })
+        });
         
         this.events.on('modalContacts:open', () => {
             this.contactsModal.open();
-        })
+        });
 
         this.events.on('modalConfirm:open', () => {
-            
-        })
+            this.api.order(this.orderModel.order)
+                .then((res) => {
+                    console.log(res)
+                })
+            this.confirmModal.open();
+        });
 
         this.events.on('initialData:loaded', () => {
             const productArray = this.catalogModel.items.map((item) => {
@@ -116,7 +114,7 @@ export class AppControler {
                 return productInstant.render(item);
             });
             productArray.forEach(product => {
-                this.nodes.gallery.appendChild(product)
+                this.nodes.gallery.appendChild(product);
             })
         });
 
@@ -125,9 +123,9 @@ export class AppControler {
     private fetchProductList(): void {
         this.api.getProductList()
             .then((list) => {
-                this.catalogModel.setItems(list.items)
+                this.catalogModel.setItems(list.items);
                 this.events.emit('initialData:loaded');
             })
             .catch(err => console.error(err));
-    }
+    };
 }

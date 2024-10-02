@@ -66,15 +66,10 @@ export class ModalOrder extends Modal {
 
         this.validateForm();
     }
-
-    private submitForm = (event: Event): void => {
-        event.preventDefault();
-        this.events.emit('modalContacts:open');
-    }
-
+    
     private renderDisableStatusButton(): void {
         const { validPayment, validAddress } = this.getValidForm();
-
+        
         this.formSubmitButtonElement.disabled = !validPayment || !validAddress;
     }
     
@@ -83,11 +78,11 @@ export class ModalOrder extends Modal {
 
         const errorPaymentText = 'Необходимо выбрать статус оплаты';
         const errorAdressText = 'Необходимо указать адрес';
-
+        
         this.formErrorsElement.innerHTML = `
-            ${!validPayment ? errorPaymentText : ''}
-            ${(!validPayment && !validAddress) ? '<br>' : ''}
-            ${!validAddress ? errorAdressText : ''}
+        ${!validPayment ? errorPaymentText : ''}
+        ${(!validPayment && !validAddress) ? '<br>' : ''}
+        ${!validAddress ? errorAdressText : ''}
         `;
 
         this.renderDisableStatusButton();
@@ -99,7 +94,12 @@ export class ModalOrder extends Modal {
             this.cashOfflineBtnElement.classList.contains('button_alt-active')
         );
         const validAddress = this.addressInputElement.value !== '';
-
+        
         return { validPayment, validAddress };
+    }
+
+    private submitForm = (event: Event): void => {
+        event.preventDefault();
+        this.events.emit('modalContacts:open');
     }
 }
