@@ -1,7 +1,7 @@
-import { IItemAPI } from "../../types/index";
+import { IItemAPI, IModal } from "../../types/index";
 import { EventEmitter } from "../base/events";
 
-export class Modal {
+export class Modal implements IModal {
     protected modal: HTMLElement;
     protected events: EventEmitter;
     protected contentContainer: HTMLElement;

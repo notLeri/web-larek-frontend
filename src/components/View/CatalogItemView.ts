@@ -1,60 +1,59 @@
-import { IView } from '../../types/index';
 import { IEvents } from '../../types/index';
 
-export class CatalogItemView implements IView {
-    protected title: HTMLSpanElement;
-    protected image: HTMLImageElement;
-    protected price: HTMLSpanElement;
-    protected category: HTMLSpanElement;
+export class CatalogItemView {
+    protected _title: HTMLSpanElement;
+    protected _image: HTMLImageElement;
+    protected _price: HTMLSpanElement;
+    protected _category: HTMLSpanElement;
 
-    protected id: string | null = null
+    protected _id: string | null = null
 
     constructor(protected container: HTMLElement, protected events: IEvents) {
-        this.title = this.container.querySelector('.card__title');
-        this.category = this.container.querySelector('.card__category');
-        this.image = this.container.querySelector('.card__image');
-        this.price = this.container.querySelector('.card__price');
+        this._title = this.container.querySelector('.card__title');
+        this._category = this.container.querySelector('.card__category');
+        this._image = this.container.querySelector('.card__image');
+        this._price = this.container.querySelector('.card__price');
 
         this.container.addEventListener("mousedown", (evt) => {
-            events.emit('modalPreview:open', { id: this.id });
+            events.emit('modalPreview:open', { id: this._id });
         });
     }
 
-    render(data: { id: string, title: string, price: number, image: string, category: string}) {
+    public render(data: { id: string, title: string, price: number, image: string, category: string}) {
         if (data) {
-            this.id = data.id;
-            this.title.textContent = data.title;
-            this.category.textContent = data.category;
+            this._id = data.id;
+            this._title.textContent = data.title;
+            this._category.textContent = data.category;
 
-            this.category.classList.remove('card__category_soft');
+            this._category.classList.remove('card__category_soft');
 
             switch (data.category) {
                 case 'софт-скил': {
-                    this.category.classList.add('card__category_soft');
+                    this._category.classList.add('card__category_soft');
                     break;
                 }
                 case 'другое': { 
-                    this.category.classList.add('card__category_other');
+                    this._category.classList.add('card__category_other');
                     break;
                 }
                 case 'дополнительное': {
-                    this.category.classList.add('card__category_additional');
+                    this._category.classList.add('card__category_additional');
                     break;
                 }
                 case 'кнопка': {
-                    this.category.classList.add('card__category_button');
+                    this._category.classList.add('card__category_button');
                     break;
                 }
                 case 'хард-скил': {
-                    this.category.classList.add('card__category_hard');
+                    this._category.classList.add('card__category_hard');
                     break;
                 }
             }
 
-            this.image.src = `./images${data.image}`;
+            this._image.src = `./images${data.image}`;
 
             const price = data.price === null ? 'Бесценно' : `${data.price} синапсов`;
-            this.price.textContent = `${price}`;
+            this._price.textContent = `${price}`;
         }
         return this.container;
     }

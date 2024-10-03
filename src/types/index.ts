@@ -14,12 +14,6 @@ export interface IItemAPI {
 
 export type TCategory = 'софт-скил' | 'другое' | 'дополнительное' | 'кнопка' | 'хард-скил';
 
-export interface ICatalogModel {
-    items: IItemAPI[];
-    setItems(items: IItemAPI[]): void;
-    getProduct(id: string): IItemAPI | null;
-}
-
 export interface ICatalogItem {
     id: string;
     image: string;
@@ -28,17 +22,23 @@ export interface ICatalogItem {
     price: number;
 }
 
-export interface IBasketModel<T = string> {
-    add(item: T): void;
-    remove(item: T): void;
-    has(item: T): boolean;
-    get products(): Map<string, number>;
-}
-
 export interface IBasketItem {
     id: string;
     title: string;
     price: number;
+}
+
+export interface IModal {
+    open(ApiItem?: IItemAPI): void;
+    close(): void;
+    handleEscUp (evt: KeyboardEvent): void;
+}
+
+export interface IBasket {
+    getItems: () => IBasketItem[];
+    add: (id: string) => void;
+    remove: (id: string) => void;
+    clear: () => void;
 }
 
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
@@ -60,8 +60,4 @@ export interface IEvents {
     on<T extends object>(event: EventName, callback: (data: T) => void): void;
     emit<T extends object>(event: string, data?: T): void;
     trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void;
-}
-
-export interface IView {
-    render(data?: object): HTMLElement;
 }

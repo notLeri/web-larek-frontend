@@ -4,9 +4,9 @@ import { Modal } from '../common/Modal'
 import { OrderModel } from '../model/OrderModel';
 
 export class ModalConfirm extends Modal {
-    orderSuccessElement: HTMLElement;
-    orderSuccessDescriptionElement: HTMLParagraphElement;
-    orderSuccessBtnElement: HTMLButtonElement;
+    private _orderSuccessElement: HTMLElement;
+    private _orderSuccessDescriptionElement: HTMLParagraphElement;
+    private _orderSuccessBtnElement: HTMLButtonElement;
 
     constructor(
         container: HTMLElement,
@@ -17,27 +17,23 @@ export class ModalConfirm extends Modal {
     }
 
     override open(): void {
-        this.render();
+        this._render();
         super.open();
     }
 
-    override close(): void {
-        super.close();
-    }
-
-    private render(): void {
-        this.orderSuccessElement = cloneTemplate('#success');
-        this.orderSuccessDescriptionElement = this.orderSuccessElement.querySelector('.order-success__description');
-        this.orderSuccessBtnElement = this.orderSuccessElement.querySelector('.order-success__close');
+    private _render(): void {
+        this._orderSuccessElement = cloneTemplate('#success');
+        this._orderSuccessDescriptionElement = this._orderSuccessElement.querySelector('.order-success__description');
+        this._orderSuccessBtnElement = this._orderSuccessElement.querySelector('.order-success__close');
         this.contentContainer.textContent = '';
-        this.contentContainer.appendChild(this.orderSuccessElement);
+        this.contentContainer.appendChild(this._orderSuccessElement);
         
-        this.orderSuccessDescriptionElement.textContent = `Списано ${this.orderModel.price} синапсов`;
-        this.orderSuccessBtnElement = this.orderSuccessElement.querySelector('.order-success__close');
-        this.orderSuccessBtnElement.addEventListener('click', this.handleClick)
+        this._orderSuccessDescriptionElement.textContent = `Списано ${this.orderModel.price} синапсов`;
+        this._orderSuccessBtnElement = this._orderSuccessElement.querySelector('.order-success__close');
+        this._orderSuccessBtnElement.addEventListener('click', this._handleClick)
     }
 
-    private handleClick = (): void => {
+    private _handleClick = (): void => {
         this.close()
     }
 }

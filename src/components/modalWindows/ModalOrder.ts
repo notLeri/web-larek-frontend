@@ -5,12 +5,12 @@ import { Modal } from "../common/Modal";
 import { OrderModel } from "../model/OrderModel";
 
 export class ModalOrder extends Modal {
-    private formOrderElement: HTMLFormElement;
-    private cardOnlineBtnElement: HTMLButtonElement;
-    private cashOfflineBtnElement: HTMLButtonElement;
-    private addressInputElement: HTMLInputElement;
-    private formSubmitButtonElement: HTMLButtonElement;
-    private formErrorsElement: HTMLSpanElement;
+    private _formOrderElement: HTMLFormElement;
+    private _cardOnlineBtnElement: HTMLButtonElement;
+    private _cashOfflineBtnElement: HTMLButtonElement;
+    private _addressInputElement: HTMLInputElement;
+    private _formSubmitButtonElement: HTMLButtonElement;
+    private _formErrorsElement: HTMLSpanElement;
 
     constructor(
         container: HTMLElement,
@@ -20,85 +20,85 @@ export class ModalOrder extends Modal {
         super(container, events);
     }
 
-    override open() {
-        this.render();
+    override open(): void {
+        this._render();
         super.open();
     }
 
-    override close() {
+    override close(): void {
         this.orderModel.resetOrder();
         super.close();
     }
 
-    private render() {
-        this.formOrderElement = cloneTemplate('#order');
-        this.cardOnlineBtnElement = this.formOrderElement.querySelector('[name=card]');
-        this.cashOfflineBtnElement = this.formOrderElement.querySelector('[name=cash]');
-        this.addressInputElement = this.formOrderElement.querySelector('.form__input[name=address]');
-        this.formSubmitButtonElement = this.formOrderElement.querySelector('.order__button');
-        this.formErrorsElement = this.formOrderElement.querySelector('.form__errors');
+    private _render(): void {
+        this._formOrderElement = cloneTemplate('#order');
+        this._cardOnlineBtnElement = this._formOrderElement.querySelector('[name=card]');
+        this._cashOfflineBtnElement = this._formOrderElement.querySelector('[name=cash]');
+        this._addressInputElement = this._formOrderElement.querySelector('.form__input[name=address]');
+        this._formSubmitButtonElement = this._formOrderElement.querySelector('.order__button');
+        this._formErrorsElement = this._formOrderElement.querySelector('.form__errors');
         this.contentContainer.textContent = '';
-        this.contentContainer.appendChild(this.formOrderElement);
+        this.contentContainer.appendChild(this._formOrderElement);
 
-        this.cardOnlineBtnElement.addEventListener('click', () => this.changePaymentMethod('online'));
-        this.cashOfflineBtnElement.addEventListener('click', () => this.changePaymentMethod('offline'));
-        this.addressInputElement.addEventListener('input', this.changeAddress);
-        this.formOrderElement.addEventListener('submit', this.submitForm);
+        this._cardOnlineBtnElement.addEventListener('click', () => this._changePaymentMethod('online'));
+        this._cashOfflineBtnElement.addEventListener('click', () => this._changePaymentMethod('offline'));
+        this._addressInputElement.addEventListener('input', this._changeAddress);
+        this._formOrderElement.addEventListener('submit', this._submitForm);
 
-        this.validateForm();
+        this._validateForm();
     }
 
-    private changeAddress = (): void => {
-        this.orderModel.addAddress(this.addressInputElement.value);
-        this.validateForm();
+    private _changeAddress = (): void => {
+        this.orderModel.addAddress(this._addressInputElement.value);
+        this._validateForm();
     }
 
-    private changePaymentMethod(payment: OrderPayment): void {
+    private _changePaymentMethod(payment: OrderPayment): void {
         this.orderModel.addPayment(payment);
         
         if (payment === 'online') {
-            this.cardOnlineBtnElement.classList.add('button_alt-active');
-            this.cashOfflineBtnElement.classList.remove('button_alt-active');
+            this._cardOnlineBtnElement.classList.add('button_alt-active');
+            this._cashOfflineBtnElement.classList.remove('button_alt-active');
         } else if (payment === 'offline') {
-            this.cardOnlineBtnElement.classList.remove('button_alt-active');
-            this.cashOfflineBtnElement.classList.add('button_alt-active');
+            this._cardOnlineBtnElement.classList.remove('button_alt-active');
+            this._cashOfflineBtnElement.classList.add('button_alt-active');
         }
 
-        this.validateForm();
+        this._validateForm();
     }
     
-    private renderDisableStatusButton(): void {
-        const { validPayment, validAddress } = this.getValidForm();
+    private _renderDisableStatusButton(): void {
+        const { validPayment, validAddress } = this._getValidForm();
         
-        this.formSubmitButtonElement.disabled = !validPayment || !validAddress;
+        this._formSubmitButtonElement.disabled = !validPayment || !validAddress;
     }
     
-    private validateForm(): void {
-        const { validPayment, validAddress } = this.getValidForm();
+    private _validateForm(): void {
+        const { validPayment, validAddress } = this._getValidForm();
 
         const errorPaymentText = 'Необходимо выбрать статус оплаты';
         const errorAdressText = 'Необходимо указать адрес';
         
-        this.formErrorsElement.innerHTML = `
+        this._formErrorsElement.innerHTML = `
         ${!validPayment ? errorPaymentText : ''}
         ${(!validPayment && !validAddress) ? '<br>' : ''}
         ${!validAddress ? errorAdressText : ''}
         `;
 
-        this.renderDisableStatusButton();
+        this._renderDisableStatusButton();
     }
 
-    private getValidForm() {
+    private _getValidForm(): { validPayment: boolean, validAddress: boolean } {
         const validPayment = (
-            this.cardOnlineBtnElement.classList.contains('button_alt-active') ||
-            this.cashOfflineBtnElement.classList.contains('button_alt-active')
+            this._cardOnlineBtnElement.classList.contains('button_alt-active') ||
+            this._cashOfflineBtnElement.classList.contains('button_alt-active')
         );
-        const validAddress = this.addressInputElement.value !== '';
+        const validAddress = this._addressInputElement.value !== '';
         
         return { validPayment, validAddress };
     }
 
-    private submitForm = (event: Event): void => {
+    private _submitForm = (event: Event): void => {
         event.preventDefault();
         this.events.emit('modalContacts:open');
     }

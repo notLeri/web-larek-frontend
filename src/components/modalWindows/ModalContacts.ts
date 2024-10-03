@@ -4,11 +4,11 @@ import { Modal } from "../common/Modal";
 import { OrderModel } from "../model/OrderModel";
 
 export class ModalContacts extends Modal {
-    private formContactsElement: HTMLFormElement;
-    private formInputEmailElement: HTMLInputElement;
-    private formInputPhoneElement: HTMLInputElement;
-    private formSubmitButtonElement: HTMLButtonElement;
-    private formErrorsElement: HTMLSpanElement;
+    private _formContactsElement: HTMLFormElement;
+    private _formInputEmailElement: HTMLInputElement;
+    private _formInputPhoneElement: HTMLInputElement;
+    private _formSubmitButtonElement: HTMLButtonElement;
+    private _formErrorsElement: HTMLSpanElement;
 
     constructor(
         container: HTMLElement,
@@ -18,70 +18,70 @@ export class ModalContacts extends Modal {
         super(container, events);
     }
 
-    override open() {
-        this.render();
+    override open(): void {
+        this._render();
         super.open();
     }
     
-    override close() {
+    override close(): void {
         this.orderModel.resetOrder();
         super.close();
     }
 
-    private render() {
-        this.formContactsElement = cloneTemplate('#contacts');
-        this.formInputEmailElement = this.formContactsElement.querySelector('.form__input[name=email]');
-        this.formInputPhoneElement = this.formContactsElement.querySelector('.form__input[name=phone]');
-        this.formSubmitButtonElement = this.formContactsElement.querySelector('.button[type=submit]');
-        this.formErrorsElement = this.formContactsElement.querySelector('.form__errors');
+    private _render(): void {
+        this._formContactsElement = cloneTemplate('#contacts');
+        this._formInputEmailElement = this._formContactsElement.querySelector('.form__input[name=email]');
+        this._formInputPhoneElement = this._formContactsElement.querySelector('.form__input[name=phone]');
+        this._formSubmitButtonElement = this._formContactsElement.querySelector('.button[type=submit]');
+        this._formErrorsElement = this._formContactsElement.querySelector('.form__errors');
         this.contentContainer.textContent = '';
-        this.contentContainer.appendChild(this.formContactsElement);
+        this.contentContainer.appendChild(this._formContactsElement);
 
-        this.validateForm();
-        this.formInputEmailElement.addEventListener('input', this.changeEmail);
-        this.formInputPhoneElement.addEventListener('input', this.changePhone);
-        this.formContactsElement.addEventListener('submit', this.submitForm);
+        this._validateForm();
+        this._formInputEmailElement.addEventListener('input', this._changeEmail);
+        this._formInputPhoneElement.addEventListener('input', this._changePhone);
+        this._formContactsElement.addEventListener('submit', this._submitForm);
     }
 
-    private renderDisableStatusButton(): void {
-        const { validEmail, validPhone } = this.getValidForm();
+    private _renderDisableStatusButton(): void {
+        const { validEmail, validPhone } = this._getValidForm();
 
-        this.formSubmitButtonElement.disabled = !validEmail || !validPhone;
+        this._formSubmitButtonElement.disabled = !validEmail || !validPhone;
     }
     
-    private validateForm(): void {
-        const { validEmail, validPhone } = this.getValidForm();
+    private _validateForm(): void {
+        const { validEmail, validPhone } = this._getValidForm();
 
         const errorEmailText = 'Необходимо указать электронную почту';
         const errorPhoneText = 'Необходимо указать номер телефона';
 
-        this.formErrorsElement.innerHTML = `
+        this._formErrorsElement.innerHTML = `
             ${!validEmail ? errorEmailText : ''}
             ${(!validEmail && !validPhone) ? '<br>' : ''}
             ${!validPhone ? errorPhoneText : ''}
         `;
 
-        this.renderDisableStatusButton();
+        this._renderDisableStatusButton();
     }
 
-    private getValidForm() {
-        const validEmail = this.formInputEmailElement.value !== '';
-        const validPhone = this.formInputPhoneElement.value !== '';
+    private _getValidForm(): { validEmail: boolean, validPhone: boolean } {
+        const validEmail = this._formInputEmailElement.value !== '';
+        const validPhone = this._formInputPhoneElement.value !== '';
 
         return { validEmail, validPhone };
     }
 
-    private changeEmail = (): void => {
-        this.orderModel.addEmail(this.formInputEmailElement.value);
-        this.validateForm();
+    private _changeEmail = (): void => {
+        this.orderModel.addEmail(this._formInputEmailElement.value);
+        this._validateForm();
     }
 
-    private changePhone = (): void => {
-        this.orderModel.addPhone(this.formInputPhoneElement.value);
-        this.validateForm();
+    private _changePhone = (): void => {
+        this.orderModel.addPhone(this._formInputPhoneElement.value);
+        this._validateForm();
     }
 
-    private submitForm = (event: Event): void => {
+    private _submitForm = (event: Event): void => {
         event.preventDefault();
         this.events.emit('modalConfirm:open');
     }

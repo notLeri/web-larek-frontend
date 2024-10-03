@@ -1,4 +1,5 @@
-import { IItemAPI, ICatalogModel, IEvents } from '../../types/index';
+import { IItemAPI, IEvents } from '../../types/index';
+import { ICatalogModel } from '../../types/model';
 
 export class CatalogModel implements ICatalogModel {
     public items: IItemAPI[];

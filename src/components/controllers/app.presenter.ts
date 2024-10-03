@@ -13,18 +13,18 @@ import { OrderModel } from "../model/OrderModel";
 import { ModalContacts } from "../modalWindows/ModalContacts";
 import { ModalConfirm } from "../modalWindows/ModalConfirm";
 
-export class AppControler {
-    private events: EventEmitter;
-    private catalogModel: CatalogModel;
-    private basketModel: BasketModel;
-    private orderModel: OrderModel;
-    private api: AppApi;
-    private productModal: ModalProduct;
-    private basketModal: ModalBasket;
-    private orderModal: ModalOrder;
-    private contactsModal: ModalContacts;
-    private confirmModal: ModalConfirm;
-    private nodes: { 
+export class AppPresenter {
+    private _events: EventEmitter;
+    private _catalogModel: CatalogModel;
+    private _basketModel: BasketModel;
+    private _orderModel: OrderModel;
+    private _api: AppApi;
+    private _productModal: ModalProduct;
+    private _basketModal: ModalBasket;
+    private _orderModal: ModalOrder;
+    private _contactsModal: ModalContacts;
+    private _confirmModal: ModalConfirm;
+    private _nodes: { 
         modalContainer: HTMLElement;
         catalogCardTemplate: HTMLTemplateElement;
         gallery: HTMLElement;
@@ -32,18 +32,18 @@ export class AppControler {
         basketButton: HTMLElement;
         basketListElement: HTMLElement;
     };
-    private initedController: boolean = false;
+    private _initedController: boolean = false;
 
     constructor() {
-        this.events = new EventEmitter();
-        this.catalogModel = new CatalogModel(this.events);
-        this.basketModel = new BasketModel(this.events, this.catalogModel);
-        this.orderModel = new OrderModel();
+        this._events = new EventEmitter();
+        this._catalogModel = new CatalogModel(this._events);
+        this._basketModel = new BasketModel(this._events, this._catalogModel);
+        this._orderModel = new OrderModel();
 
         const baseApi = new Api(API_URL, settings);
-        this.api = new AppApi(baseApi);
+        this._api = new AppApi(baseApi);
 
-        this.nodes = {
+        this._nodes = {
             modalContainer: document.querySelector('#modal-container') as HTMLElement,
             catalogCardTemplate: document.querySelector('#card-catalog'),
             gallery: document.querySelector('.gallery'),
@@ -52,79 +52,79 @@ export class AppControler {
             basketButton: document.querySelector('.header__basket'),
         };
 
-        this.productModal = new ModalProduct(this.nodes.modalContainer, this.events, this.basketModel);
-        this.basketModal = new ModalBasket(this.nodes.modalContainer, this.events, this.basketModel, this.orderModel, this.api);
-        this.orderModal = new ModalOrder(this.nodes.modalContainer, this.events, this.orderModel);
-        this.contactsModal = new ModalContacts(this.nodes.modalContainer, this.events, this.orderModel);
-        this.confirmModal = new ModalConfirm(this.nodes.modalContainer, this.events, this.orderModel);
+        this._productModal = new ModalProduct(this._nodes.modalContainer, this._events, this._basketModel);
+        this._basketModal = new ModalBasket(this._nodes.modalContainer, this._events, this._basketModel, this._orderModel);
+        this._orderModal = new ModalOrder(this._nodes.modalContainer, this._events, this._orderModel);
+        this._contactsModal = new ModalContacts(this._nodes.modalContainer, this._events, this._orderModel);
+        this._confirmModal = new ModalConfirm(this._nodes.modalContainer, this._events, this._orderModel);
 
-        this.nodes.basketButton.addEventListener("click", () => {
-           this.events.emit('modalBasket:open');
+        this._nodes.basketButton.addEventListener("click", () => {
+           this._events.emit('modalBasket:open');
         });
     }
 
     public init(): void {
-        if (this.initedController === true) return;
+        if (this._initedController === true) return;
 
-        this.initedController = true;
+        this._initedController = true;
 
-        this.listenEvents();
-        this.fetchProductList();
+        this._listenEvents();
+        this._fetchProductList();
     }
 
-    private changeHeaderBasketQuantity(items: string[]): void {
-        this.nodes.headerBasketCounterElement.textContent = `${items.length}`;
+    private _changeHeaderBasketQuantity(items: string[]): void {
+        this._nodes.headerBasketCounterElement.textContent = `${items.length}`;
     }
 
-    private listenEvents() {
-        this.events.on('basket:change', (event: { items: string[] }) => this.changeHeaderBasketQuantity(event.items));
+    private _listenEvents(): void {
+        this._events.on('basket:change', (event: { items: string[] }) => this._changeHeaderBasketQuantity(event.items));
 
-        this.events.on('ui:basket-add', (event: { id: string }) => this.basketModel.add(event.id));
+        this._events.on('ui:basket-add', (event: { id: string }) => this._basketModel.add(event.id));
 
-        this.events.on('ui:basket-remove', (event: { id: string }) => this.basketModel.remove(event.id));
+        this._events.on('ui:basket-remove', (event: { id: string }) => this._basketModel.remove(event.id));
 
-        this.events.on('modalPreview:open', ({ id }: { id: string } ) => {
-            const ApiItem = this.catalogModel.getProduct(id);
-            this.productModal.open(ApiItem);
+        this._events.on('modalPreview:open', ({ id }: { id: string } ) => {
+            const ApiItem = this._catalogModel.getProduct(id);
+            this._productModal.open(ApiItem);
         });
 
-        this.events.on('modalBasket:open', () => {
-            this.basketModal.open();
+        this._events.on('modalBasket:open', () => {
+            this._basketModal.open();
         });
 
-        this.events.on('modalOrder:open', () => {
-            this.orderModal.open();
+        this._events.on('modalOrder:open', () => {
+            this._orderModal.open();
         });
         
-        this.events.on('modalContacts:open', () => {
-            this.contactsModal.open();
+        this._events.on('modalContacts:open', () => {
+            this._contactsModal.open();
         });
 
-        this.events.on('modalConfirm:open', () => {
-            this.api.order(this.orderModel.order)
+        this._events.on('modalConfirm:open', () => {
+            this._api.order(this._orderModel.order)
                 .then((res) => {
                     console.log(res)
-                })
-            this.confirmModal.open();
+                });
+            this._confirmModal.open();
         });
 
-        this.events.on('initialData:loaded', () => {
-            const productArray = this.catalogModel.items.map((item) => {
-                const productInstant = new CatalogItemView(cloneTemplate(this.nodes.catalogCardTemplate), this.events);
+        this._events.on('initialData:loaded', () => {
+            const productArray = this._catalogModel.items.map((item) => {
+                const productInstant = new CatalogItemView(cloneTemplate(this._nodes.catalogCardTemplate), this._events);
                 return productInstant.render(item);
             });
             productArray.forEach(product => {
-                this.nodes.gallery.appendChild(product);
+                this._nodes.gallery.appendChild(product);
             })
         });
 
     }
 
-    private fetchProductList(): void {
-        this.api.getProductList()
+    private _fetchProductList(): void {
+        this._api.getProductList()
             .then((list) => {
-                this.catalogModel.setItems(list.items);
-                this.events.emit('initialData:loaded');
+                this._catalogModel.setItems(list.items);
+                this._events.emit('initialData:loaded');
             })
             .catch(err => console.error(err));
     };

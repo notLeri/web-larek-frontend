@@ -2,63 +2,63 @@ import { IOrder, OrderPayment } from "../../types/order";
 import { IOrderModel } from "../../types/model";
 
 export class OrderModel implements IOrderModel {
-    private items: string[];
-    private totalPrice: number = 0;
-    private payment: OrderPayment | null = null;
-    private email: string | null = null;
-    private phone: string | null = null;
-    private address: string | null = null;
+    private _items: string[];
+    private _totalPrice: number = 0;
+    private _payment: OrderPayment | null = null;
+    private _email: string | null = null;
+    private _phone: string | null = null;
+    private _address: string | null = null;
 
     constructor() {}
 
     public addItems(itemIDs: string[], price: number): void {
-        this.items = itemIDs;
-        this.totalPrice = price;
+        this._items = itemIDs;
+        this._totalPrice = price;
         this._changed();
     }
 
     public addPayment(payment: OrderPayment): void {
-        this.payment = payment;
+        this._payment = payment;
         this._changed();
     }
 
     public addAddress(address: string): void {
-        this.address = address;
+        this._address = address;
         this._changed();
     }
 
     public addEmail(email: string): void {
-        this.email = email;
+        this._email = email;
         this._changed();
     }
 
     public addPhone(phone: string): void {
-        this.phone = phone;
+        this._phone = phone;
         this._changed();
     }
 
     get order(): IOrder {
-        return { payment: this.payment, address: this.address, email: this.email, phone: this.phone, total: this.totalPrice, items: this.items }
+        return { payment: this._payment, address: this._address, email: this._email, phone: this._phone, total: this._totalPrice, items: this._items }
     }
 
     get price(): number {
-        return this.totalPrice;
+        return this._totalPrice;
     }
 
     public getValidOrder(): boolean {
-        return this.payment !== null
-            && this.email !== null
-            && this.phone !== null
-            && this.address !== null;
+        return this._payment !== null
+            && this._email !== null
+            && this._phone !== null
+            && this._address !== null;
     }
 
     public resetOrder(): void {
-        this.payment = null;
-        this.email = null;
-        this.phone = null;
-        this.address = null;
-        this.items = [];
-        this.totalPrice = 0;
+        this._payment = null;
+        this._email = null;
+        this._phone = null;
+        this._address = null;
+        this._items = [];
+        this._totalPrice = 0;
 
         this._changed();
     }

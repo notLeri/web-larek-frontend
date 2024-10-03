@@ -1,25 +1,18 @@
-import { IBasketItem } from './index';
-import { IOrderFormPaymentAddress, IOrderFormMailPhone, SuccessResult, ErrorResult, OrderPayment, IOrder } from './order';
+import { IItemAPI } from './index';
+import { OrderPayment, IOrder } from './order';
 
-export interface IBasket {
-    getItems: () => IBasketItem[];
-    add: (id: string) => void;
-    remove: (id: string) => void;
-    clear: () => void;
+export interface ICatalogModel {
+    items: IItemAPI[];
+    setItems(items: IItemAPI[]): void;
+    getProduct(id: string): IItemAPI | null;
 }
 
-// export interface IPurchase {
-//     purchase: () => Promise<void>;
-// }
-
-// export interface IOrder {
-//     purchaseList: string[];
-
-//     personalData: { 
-//         orderFormPaymentAddress: IOrderFormPaymentAddress,
-//         orderFormMailPhone: IOrderFormMailPhone
-//     };
-// }
+export interface IBasketModel<T = string> {
+    add(item: T): void;
+    remove(item: T): void;
+    has(item: T): boolean;
+    get products(): Map<string, number>;
+}
 
 export interface IOrderModel {
     addItems: (items: string[], price: number) => void;
