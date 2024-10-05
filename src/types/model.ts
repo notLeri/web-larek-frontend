@@ -2,7 +2,6 @@ import { IItemAPI } from './index';
 import { OrderPayment, IOrder } from './order';
 
 export interface ICatalogModel {
-    items: IItemAPI[];
     setItems(items: IItemAPI[]): void;
     getProduct(id: string): IItemAPI | null;
 }

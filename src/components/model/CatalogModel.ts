@@ -2,15 +2,19 @@ import { IItemAPI, IEvents } from '../../types/index';
 import { ICatalogModel } from '../../types/model';
 
 export class CatalogModel implements ICatalogModel {
-    public items: IItemAPI[];
+    private _items: IItemAPI[];
 
     constructor(protected events: IEvents) {}
 
-    setItems(items: IItemAPI[]): void {
-        this.items = items;
+    get items(): IItemAPI[] {
+        return this._items;
     }
 
-    getProduct(id: string): IItemAPI | null {
-        return this.items.find(item => item.id === id) || null;
+    public setItems(items: IItemAPI[]): void {
+        this._items = items;
+    }
+
+    public getProduct(id: string): IItemAPI | null {
+        return this._items.find(_item => _item.id === id) || null;
     }
 }

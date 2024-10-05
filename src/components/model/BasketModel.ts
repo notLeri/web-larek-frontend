@@ -26,7 +26,7 @@ export class BasketModel implements IBasketModel {
         this._changed();
     }
 
-    protected _changed() {
+    protected _changed(): void {
         this.events.emit('basket:change', { items: Array.from(this._items.keys()) });
     }
 
