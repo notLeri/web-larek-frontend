@@ -1,5 +1,5 @@
 import { API_URL, settings } from "../../utils/constants";
-import { cloneTemplate } from "../../utils/utils";
+import { cloneTemplate, ensureElement } from "../../utils/utils";
 import { Api } from "../base/api";
 import { EventEmitter } from "../base/events";
 import { ModalProduct } from "../modalWindows/ModalProduct";
@@ -12,6 +12,8 @@ import { ModalOrder } from "../modalWindows/ModalOrder";
 import { OrderModel } from "../model/OrderModel";
 import { ModalContacts } from "../modalWindows/ModalContacts";
 import { ModalConfirm } from "../modalWindows/ModalConfirm";
+import { Modal } from "../common/Modal";
+import { Basket } from "../modalWindows/ModalBasketCopy";
 
 export class AppPresenter {
     private _events: EventEmitter;
@@ -19,8 +21,10 @@ export class AppPresenter {
     private _basketModel: BasketModel;
     private _orderModel: OrderModel;
     private _api: AppApi;
+    private _modal: Modal;
     private _productModal: ModalProduct;
     private _basketModal: ModalBasket;
+    private _basketModalCopy: Basket;
     private _orderModal: ModalOrder;
     private _contactsModal: ModalContacts;
     private _confirmModal: ModalConfirm;
@@ -30,7 +34,7 @@ export class AppPresenter {
         gallery: HTMLElement;
         headerBasketCounterElement: HTMLElement;
         basketButton: HTMLElement;
-        basketListElement: HTMLElement;
+        // basketListElement: HTMLElement;
     };
     private _initedController: boolean = false;
 
@@ -44,16 +48,20 @@ export class AppPresenter {
         this._api = new AppApi(baseApi);
 
         this._nodes = {
-            modalContainer: document.querySelector('#modal-container') as HTMLElement,
+            modalContainer: ensureElement<HTMLElement>('#modal-container'),
             catalogCardTemplate: document.querySelector('#card-catalog'),
             gallery: document.querySelector('.gallery'),
             headerBasketCounterElement: document.querySelector('.header__basket-counter'),
-            basketListElement: document.querySelector('.basket__list'),
+            // basketListElement: document.querySelector('.basket__list'),
             basketButton: document.querySelector('.header__basket'),
         };
 
+        const basketTemplateElement = ensureElement<HTMLTemplateElement>('#basket');
+
+        this._modal = new Modal(this._nodes.modalContainer, this._events);
         this._productModal = new ModalProduct(this._nodes.modalContainer, this._events, this._basketModel);
         this._basketModal = new ModalBasket(this._nodes.modalContainer, this._events, this._basketModel, this._orderModel);
+        // this._basketModalCopy = new Basket('basket', this._nodes.modalContainer, this._events, this._basketModel, this._orderModel);
         this._orderModal = new ModalOrder(this._nodes.modalContainer, this._events, this._orderModel);
         this._contactsModal = new ModalContacts(this._nodes.modalContainer, this._events, this._orderModel);
         this._confirmModal = new ModalConfirm(this._nodes.modalContainer, this._events, this._orderModel);
@@ -89,7 +97,9 @@ export class AppPresenter {
         });
 
         this._events.on('modalBasket:open', () => {
-            this._basketModal.open();
+            this._modal.render();
+            
+            // this._basketModal.open();
         });
 
         this._events.on('modalOrder:open', () => {

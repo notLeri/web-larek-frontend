@@ -1,13 +1,20 @@
-import { IItemAPI, IModal } from "../../types/index";
+import { IItemAPI } from "../../types/index";
+import { Component } from "../base/Component";
 import { EventEmitter } from "../base/events";
 
-export class Modal implements IModal {
+interface IModalData {
+    
+}
+
+export class Modal extends Component<IModalData> {
     protected modal: HTMLElement;
     protected events: EventEmitter;
     protected contentContainer: HTMLElement;
     protected container: HTMLElement;
 
     constructor(container: HTMLElement, events: EventEmitter) {
+        super(container, events);
+
         this.container = container;
         this.events = events;
         const closeButtonElement = this.container.querySelector(".modal__close");
@@ -38,4 +45,10 @@ export class Modal implements IModal {
           this.close();
         }
     };
+
+    render(data?: IModalData): HTMLElement {
+        super.render(data);
+        this.open();
+        return this.container;
+    }
 }

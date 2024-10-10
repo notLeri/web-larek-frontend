@@ -34,13 +34,6 @@ export interface IModal {
     handleEscUp (evt: KeyboardEvent): void;
 }
 
-export interface IBasket {
-    getItems: () => IBasketItem[];
-    add: (id: string) => void;
-    remove: (id: string) => void;
-    clear: () => void;
-}
-
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
 export interface IApi {

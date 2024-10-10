@@ -1,43 +1,56 @@
 import { IItemAPI } from '../../types';
-import { cloneTemplate } from '../../utils/utils';
+import { cloneTemplate, ensureElement } from '../../utils/utils';
+import { Component } from '../base/Component';
 import { EventEmitter } from '../base/events';
-import { Modal } from '../common/Modal';
 import { BasketModel } from '../model/BasketModel';
 import { OrderModel } from '../model/OrderModel';
 
-export class ModalBasket extends Modal {
-    private _basketElement: HTMLElement;
+export interface IBasket {
+
+}
+
+export class Basket extends Component<IBasket> {
+    // private _basketElement: HTMLElement;
     private _basketList: HTMLElement;
     private _basketPriceElement: HTMLElement;
     private _basketSubmitButton: HTMLButtonElement;
 
-
     constructor(
+        blockName: string,
         container: HTMLElement,
         events: EventEmitter,
         private _basketModel: BasketModel,
         private _orderModel: OrderModel,
     ) {
         super(container, events);
-    }
 
-    override open(): void {
-        this._render();
-        super.open();
-    }
-
-    private _render(): void {
-        this._basketElement = cloneTemplate('#basket');
-        this._basketList = this._basketElement.querySelector('.basket__list');
-        this._basketPriceElement = this._basketElement.querySelector('.basket__price');
-        this._basketSubmitButton = this._basketElement.querySelector('.basket__button');
-        this.contentContainer.textContent = '';
-        this.contentContainer.appendChild(this._basketElement);
-
+        // this._basketElement = cloneTemplate('#basket');
+        this._basketList = ensureElement<HTMLElement>(`.${blockName}__list`, container);
+        this._basketSubmitButton = ensureElement<HTMLButtonElement>(`.${blockName}__button`, container);
+        this._basketPriceElement = ensureElement<HTMLSpanElement>(`.${blockName}__price`, container);
+        // this.contentContainer.textContent = '';
+        // this.setText(this.container, '');
+        // this.contentContainer.appendChild(this._basketElement);
+        
         this._basketSubmitButton.addEventListener('click', this._placeOrder);
+    }
+    
+    // protected setText(element: HTMLElement, value: unknown) {
+    //     if (element) {
+    //         element.textContent = String(value);
+    //     }
+    // }
 
-        this._renderProductList();
-    }   
+    // override open(): void {
+    //     this._render();
+    //     super.open();
+    // }
+
+    // render(): HTMLElement {
+    //     return super.render();
+
+    //     // this._renderProductList();
+    // }   
 
     private _renderDisableStatusButton(): void {
         this._basketSubmitButton.disabled = this._basketModel.price === 0;
