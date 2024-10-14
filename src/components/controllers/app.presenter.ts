@@ -61,7 +61,7 @@ export class AppPresenter {
         this._modal = new Modal(this._nodes.modalContainer, this._events);
         this._productModal = new ModalProduct(this._nodes.modalContainer, this._events, this._basketModel);
         this._basketModal = new ModalBasket(this._nodes.modalContainer, this._events, this._basketModel, this._orderModel);
-        // this._basketModalCopy = new Basket('basket', this._nodes.modalContainer, this._events, this._basketModel, this._orderModel);
+        // this._basketModalCopy = new Basket(this._nodes.modalContainer, this._events, this._basketModel, this._orderModel);
         this._orderModal = new ModalOrder(this._nodes.modalContainer, this._events, this._orderModel);
         this._contactsModal = new ModalContacts(this._nodes.modalContainer, this._events, this._orderModel);
         this._confirmModal = new ModalConfirm(this._nodes.modalContainer, this._events, this._orderModel);
@@ -97,7 +97,14 @@ export class AppPresenter {
         });
 
         this._events.on('modalBasket:open', () => {
-            this._modal.render();
+            this._modal.render({
+                // content: order.render({
+                //     phone: '',
+                //     email: '',
+                //     valid: false,
+                //     errors: []
+                // })
+            });
             
             // this._basketModal.open();
         });

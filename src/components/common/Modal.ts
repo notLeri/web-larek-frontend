@@ -11,6 +11,7 @@ export class Modal extends Component<IModalData> {
     protected events: EventEmitter;
     protected contentContainer: HTMLElement;
     protected container: HTMLElement;
+    protected children: HTMLElement;
 
     constructor(container: HTMLElement, events: EventEmitter) {
         super(container, events);
@@ -29,6 +30,9 @@ export class Modal extends Component<IModalData> {
        this.contentContainer = this.container.querySelector('.modal__content');
     }
   
+    set content(value: HTMLElement) {
+        this.children.replaceChildren(value);
+    }
 
     open(ApiItem?: IItemAPI) {
         this.container.classList.add("modal_active");
