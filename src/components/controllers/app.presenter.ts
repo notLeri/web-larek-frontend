@@ -13,7 +13,9 @@ import { OrderModel } from "../model/OrderModel";
 import { ModalContacts } from "../modalWindows/ModalContacts";
 import { ModalConfirm } from "../modalWindows/ModalConfirm";
 import { Modal } from "../common/Modal";
-import { Basket } from "../modalWindows/ModalBasketCopy";
+import { Basket } from "../View/BasketView";
+import { BasketItem } from "../View/BasketItemView";
+import { Order } from "../View/OrderView";
 
 export class AppPresenter {
     private _events: EventEmitter;
@@ -22,6 +24,9 @@ export class AppPresenter {
     private _orderModel: OrderModel;
     private _api: AppApi;
     private _modal: Modal;
+    private _basket: Basket;
+    private _basketItem: BasketItem;
+    private _order: Order;
     private _productModal: ModalProduct;
     private _basketModal: ModalBasket;
     private _basketModalCopy: Basket;
@@ -31,12 +36,20 @@ export class AppPresenter {
     private _nodes: { 
         modalContainer: HTMLElement;
         catalogCardTemplate: HTMLTemplateElement;
+        basketTemplate: HTMLTemplateElement;
+        basketItemTemplate: HTMLTemplateElement;
+        orderTemplate: HTMLTemplateElement;
         gallery: HTMLElement;
         headerBasketCounterElement: HTMLElement;
         basketButton: HTMLElement;
         // basketListElement: HTMLElement;
     };
+    private _templates: {
+        cardCatalogTemplate: HTMLTemplateElement,
+        
+    };
     private _initedController: boolean = false;
+    
 
     constructor() {
         this._events = new EventEmitter();
@@ -50,9 +63,11 @@ export class AppPresenter {
         this._nodes = {
             modalContainer: ensureElement<HTMLElement>('#modal-container'),
             catalogCardTemplate: document.querySelector('#card-catalog'),
+            basketTemplate: ensureElement<HTMLTemplateElement>('#basket'),
+            basketItemTemplate: ensureElement<HTMLTemplateElement>('#card-basket'),
+            orderTemplate: ensureElement<HTMLTemplateElement>('#order'),
             gallery: document.querySelector('.gallery'),
             headerBasketCounterElement: document.querySelector('.header__basket-counter'),
-            // basketListElement: document.querySelector('.basket__list'),
             basketButton: document.querySelector('.header__basket'),
         };
 
@@ -61,7 +76,8 @@ export class AppPresenter {
         this._modal = new Modal(this._nodes.modalContainer, this._events);
         this._productModal = new ModalProduct(this._nodes.modalContainer, this._events, this._basketModel);
         this._basketModal = new ModalBasket(this._nodes.modalContainer, this._events, this._basketModel, this._orderModel);
-        // this._basketModalCopy = new Basket(this._nodes.modalContainer, this._events, this._basketModel, this._orderModel);
+        this._basket = new Basket(cloneTemplate(this._nodes.basketTemplate), this._events, this._basketModel, this._orderModel);
+        this._order = new Order(cloneTemplate(this._nodes.orderTemplate), this._events);
         this._orderModal = new ModalOrder(this._nodes.modalContainer, this._events, this._orderModel);
         this._contactsModal = new ModalContacts(this._nodes.modalContainer, this._events, this._orderModel);
         this._confirmModal = new ModalConfirm(this._nodes.modalContainer, this._events, this._orderModel);
@@ -89,7 +105,13 @@ export class AppPresenter {
 
         this._events.on('ui:basket-add', (event: { id: string }) => this._basketModel.add(event.id));
 
-        this._events.on('ui:basket-remove', (event: { id: string }) => this._basketModel.remove(event.id));
+        this._events.on('ui:basket-remove', (event: { id: string }) => {
+            this._basketModel.remove(event.id);
+            this._basket.removeById(event.id);
+            this._modal.render({
+                content: this._basket.render({ list: this._basketModel.fullProductsArr })
+            });
+        });
 
         this._events.on('modalPreview:open', ({ id }: { id: string } ) => {
             const ApiItem = this._catalogModel.getProduct(id);
@@ -98,19 +120,15 @@ export class AppPresenter {
 
         this._events.on('modalBasket:open', () => {
             this._modal.render({
-                // content: order.render({
-                //     phone: '',
-                //     email: '',
-                //     valid: false,
-                //     errors: []
-                // })
+                content: this._basket.render({ list: this._basketModel.fullProductsArr })
             });
-            
-            // this._basketModal.open();
         });
 
         this._events.on('modalOrder:open', () => {
-            this._orderModal.open();
+            // this._orderModal.open();
+            this._modal.render({
+                content: this._order.render({})
+            })
         });
         
         this._events.on('modalContacts:open', () => {

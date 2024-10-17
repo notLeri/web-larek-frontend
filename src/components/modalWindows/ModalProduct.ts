@@ -14,7 +14,7 @@ export class ModalProduct extends Modal{
     private _buttonElement: HTMLButtonElement;
     private _cardFullElement: HTMLElement;
 
-    constructor (container: HTMLElement, events: EventEmitter, private basket: IBasketModel) {
+    constructor (container: HTMLElement, events: EventEmitter, private basketModel: IBasketModel) {
         super(container, events);
     }
 
@@ -24,10 +24,10 @@ export class ModalProduct extends Modal{
     }
 
     private _handleClick(data: IItemAPI): void {
-        if (this.basket.has(data.id)) {
-            this.basket.remove(data.id);
+        if (this.basketModel.has(data.id)) {
+            this.basketModel.remove(data.id);
         } else {
-            this.basket.add(data.id);
+            this.basketModel.add(data.id);
         }
 
         this._renderButtonText(data);
@@ -62,7 +62,7 @@ export class ModalProduct extends Modal{
     }
 
     private _renderButtonText(data: IItemAPI): void {
-        if (!this.basket.has(data.id)) {
+        if (!this.basketModel.has(data.id)) {
             this._buttonElement.textContent = "Купить";
         } else {
             this._buttonElement.textContent = "Убрать";

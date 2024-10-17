@@ -21,6 +21,7 @@ export abstract class Component<T> {
             if (state) element.setAttribute('disabled', 'disabled');
             else element.removeAttribute('disabled');
         }
+        console.log(element, state);
     }
 
     // Скрыть
@@ -32,9 +33,6 @@ export abstract class Component<T> {
     protected setVisible(element: HTMLElement) {
         element.style.removeProperty('display');
     }
-
-    // Пристроить элементик
-    // protected setNode
 
     // Установить изображение с алтернативным текстом
     protected setImage(element: HTMLImageElement, src: string, alt?: string) {

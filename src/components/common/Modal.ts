@@ -1,4 +1,5 @@
 import { IItemAPI } from "../../types/index";
+import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
 import { EventEmitter } from "../base/events";
 
@@ -16,6 +17,7 @@ export class Modal extends Component<IModalData> {
     constructor(container: HTMLElement, events: EventEmitter) {
         super(container, events);
 
+        this.children = ensureElement<HTMLElement>('.modal__content', container);
         this.container = container;
         this.events = events;
         const closeButtonElement = this.container.querySelector(".modal__close");
