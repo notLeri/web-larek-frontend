@@ -2,20 +2,17 @@ import { API_URL, settings } from "../../utils/constants";
 import { cloneTemplate, ensureElement } from "../../utils/utils";
 import { Api } from "../base/api";
 import { EventEmitter } from "../base/events";
-import { ModalProduct } from "../modalWindows/ModalProduct";
 import { AppApi } from "../model/AppApi";
 import { BasketModel } from "../model/BasketModel";
 import { CatalogModel } from "../model/CatalogModel";
 import { CatalogItemView } from "../View/CatalogItemView";
-import { ModalBasket } from "../modalWindows/ModalBasket";
-import { ModalOrder } from "../modalWindows/ModalOrder";
 import { OrderModel } from "../model/OrderModel";
-import { ModalContacts } from "../modalWindows/ModalContacts";
-import { ModalConfirm } from "../modalWindows/ModalConfirm";
 import { Modal } from "../common/Modal";
 import { Basket } from "../View/BasketView";
-import { BasketItem } from "../View/BasketItemView";
 import { Order } from "../View/OrderView";
+import { ProductPreview } from "../View/ProductPreviewView";
+import { Contacts } from "../View/ContactsView";
+import { ConfirmSuccess } from "../View/ConfirmSuccessView";
 
 export class AppPresenter {
     private _events: EventEmitter;
@@ -24,29 +21,23 @@ export class AppPresenter {
     private _orderModel: OrderModel;
     private _api: AppApi;
     private _modal: Modal;
+    private _productPreview: ProductPreview;
     private _basket: Basket;
-    private _basketItem: BasketItem;
     private _order: Order;
-    private _productModal: ModalProduct;
-    private _basketModal: ModalBasket;
-    private _basketModalCopy: Basket;
-    private _orderModal: ModalOrder;
-    private _contactsModal: ModalContacts;
-    private _confirmModal: ModalConfirm;
+    private _contacts: Contacts;
+    private _confirmSuccess: ConfirmSuccess;
     private _nodes: { 
         modalContainer: HTMLElement;
         catalogCardTemplate: HTMLTemplateElement;
+        cardPreviewTemplate: HTMLTemplateElement;
         basketTemplate: HTMLTemplateElement;
         basketItemTemplate: HTMLTemplateElement;
         orderTemplate: HTMLTemplateElement;
+        contactsTemplate: HTMLTemplateElement;
+        confirmSuccessTemplate: HTMLTemplateElement;
         gallery: HTMLElement;
         headerBasketCounterElement: HTMLElement;
         basketButton: HTMLElement;
-        // basketListElement: HTMLElement;
-    };
-    private _templates: {
-        cardCatalogTemplate: HTMLTemplateElement,
-        
     };
     private _initedController: boolean = false;
     
@@ -63,24 +54,23 @@ export class AppPresenter {
         this._nodes = {
             modalContainer: ensureElement<HTMLElement>('#modal-container'),
             catalogCardTemplate: document.querySelector('#card-catalog'),
+            cardPreviewTemplate: ensureElement<HTMLTemplateElement>('#card-preview'),
             basketTemplate: ensureElement<HTMLTemplateElement>('#basket'),
             basketItemTemplate: ensureElement<HTMLTemplateElement>('#card-basket'),
             orderTemplate: ensureElement<HTMLTemplateElement>('#order'),
+            contactsTemplate: ensureElement<HTMLTemplateElement>('#contacts'),
+            confirmSuccessTemplate: ensureElement<HTMLTemplateElement>('#success'),
             gallery: document.querySelector('.gallery'),
             headerBasketCounterElement: document.querySelector('.header__basket-counter'),
             basketButton: document.querySelector('.header__basket'),
         };
 
-        const basketTemplateElement = ensureElement<HTMLTemplateElement>('#basket');
-
         this._modal = new Modal(this._nodes.modalContainer, this._events);
-        this._productModal = new ModalProduct(this._nodes.modalContainer, this._events, this._basketModel);
-        this._basketModal = new ModalBasket(this._nodes.modalContainer, this._events, this._basketModel, this._orderModel);
+        this._productPreview = new ProductPreview(cloneTemplate(this._nodes.cardPreviewTemplate), this._events, this._basketModel);
         this._basket = new Basket(cloneTemplate(this._nodes.basketTemplate), this._events, this._basketModel, this._orderModel);
-        this._order = new Order(cloneTemplate(this._nodes.orderTemplate), this._events);
-        this._orderModal = new ModalOrder(this._nodes.modalContainer, this._events, this._orderModel);
-        this._contactsModal = new ModalContacts(this._nodes.modalContainer, this._events, this._orderModel);
-        this._confirmModal = new ModalConfirm(this._nodes.modalContainer, this._events, this._orderModel);
+        this._order = new Order(cloneTemplate(this._nodes.orderTemplate), this._events, this._orderModel);
+        this._contacts = new Contacts(cloneTemplate(this._nodes.contactsTemplate), this._events, this._orderModel);
+        this._confirmSuccess = new ConfirmSuccess(cloneTemplate(this._nodes.confirmSuccessTemplate), this._events);
 
         this._nodes.basketButton.addEventListener("click", () => {
            this._events.emit('modalBasket:open');
@@ -103,7 +93,9 @@ export class AppPresenter {
     private _listenEvents(): void {
         this._events.on('basket:change', (event: { items: string[] }) => this._changeHeaderBasketQuantity(event.items));
 
-        this._events.on('ui:basket-add', (event: { id: string }) => this._basketModel.add(event.id));
+        this._events.on('ui:basket-add', (event: { id: string }) => {
+            this._basketModel.add(event.id);
+        });
 
         this._events.on('ui:basket-remove', (event: { id: string }) => {
             this._basketModel.remove(event.id);
@@ -113,9 +105,19 @@ export class AppPresenter {
             });
         });
 
+        this._events.on('modal:close', () => {
+            if (this._modal.isOpen()) {
+                this._modal.close();
+            };
+            this._orderModel.resetOrder();
+        });
+
         this._events.on('modalPreview:open', ({ id }: { id: string } ) => {
             const ApiItem = this._catalogModel.getProduct(id);
-            this._productModal.open(ApiItem);
+
+            this._modal.render({
+                content: this._productPreview.render({data: ApiItem})
+            });
         });
 
         this._events.on('modalBasket:open', () => {
@@ -125,14 +127,17 @@ export class AppPresenter {
         });
 
         this._events.on('modalOrder:open', () => {
-            // this._orderModal.open();
             this._modal.render({
                 content: this._order.render({})
             })
+            this._order.resetInputs();
         });
         
         this._events.on('modalContacts:open', () => {
-            this._contactsModal.open();
+            this._modal.render({
+                content: this._contacts.render({})
+            })
+            this._contacts.resetInputs();
         });
 
         this._events.on('modalConfirm:open', () => {
@@ -140,13 +145,16 @@ export class AppPresenter {
                 .then((res) => {
                     console.log(res)
                 });
-            this._confirmModal.open();
+
+            this._modal.render({
+                content: this._confirmSuccess.render({ price: this._orderModel.price })
+            });
         });
 
         this._events.on('initialData:loaded', () => {
             const productArray = this._catalogModel.items.map((item) => {
                 const productInstant = new CatalogItemView(cloneTemplate(this._nodes.catalogCardTemplate), this._events);
-                return productInstant.render(item);
+                return productInstant.render({ item });
             });
             productArray.forEach(product => {
                 this._nodes.gallery.appendChild(product);

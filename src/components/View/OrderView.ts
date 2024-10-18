@@ -1,48 +1,55 @@
+import { OrderPayment } from "../../types/order";
+import { IForm } from "../../types/view";
 import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
 import { EventEmitter } from "../base/events";
+import { OrderModel } from "../model/OrderModel";
 
-interface IOrder {
-
-}
-
-export class Order extends Component<IOrder> {
+export class Order extends Component<IForm> {
     private _cardOnlineBtnElement: HTMLButtonElement;
     private _cashOfflineBtnElement: HTMLButtonElement;
     private _addressInputElement: HTMLInputElement;
     private _formSubmitButtonElement: HTMLButtonElement;
     private _formErrorsElement: HTMLSpanElement;
+    private _orderModel: OrderModel;
 
-    constructor(container: HTMLElement, events: EventEmitter) {
+    constructor(container: HTMLElement, events: EventEmitter, orderModel: OrderModel) {
         super(container, events);
 
+        this._orderModel = orderModel;
         this._cardOnlineBtnElement = ensureElement<HTMLButtonElement>('[name=card]', this.container);
         this._cashOfflineBtnElement = ensureElement<HTMLButtonElement>('[name=cash]', this.container);
         this._addressInputElement = ensureElement<HTMLInputElement>('[name=address]', this.container);
         this._formSubmitButtonElement = ensureElement<HTMLButtonElement>('.order__button', this.container);
         this._formErrorsElement = ensureElement<HTMLSpanElement>('.form__errors', this.container);
 
-        // this._addressInputElement = this._formOrderElement.querySelector('.form__input[name=address]');
-        // this._formSubmitButtonElement = this._formOrderElement.querySelector('.order__button');
-        // this._formErrorsElement = this._formOrderElement.querySelector('.form__errors');
-        // this.contentContainer.textContent = '';
-        // this.contentContainer.appendChild(this._formOrderElement);
-
-        // this._cardOnlineBtnElement.addEventListener('click', () => this._changePaymentMethod('online'));
-        // this._cashOfflineBtnElement.addEventListener('click', () => this._changePaymentMethod('offline'));
-        // this._addressInputElement.addEventListener('input', this._changeAddress);
-        // this._formOrderElement.addEventListener('submit', this._submitForm);
+        this._cardOnlineBtnElement.addEventListener('click', () => this._changePaymentMethod('online'));
+        this._cashOfflineBtnElement.addEventListener('click', () => this._changePaymentMethod('offline'));
+        this._addressInputElement.addEventListener('input', this._changeAddress);
+        this.container.addEventListener('submit', this._submitForm);
 
         this._validateForm();
     }
 
+    public resetInputs(): void {
+        if (this._cardOnlineBtnElement.classList.contains('button_alt-active')) {
+            this._cardOnlineBtnElement.classList.remove('button_alt-active');
+        }
+        if (this._cashOfflineBtnElement.classList.contains('button_alt-active')) {
+            this._cashOfflineBtnElement.classList.remove('button_alt-active');
+        }
+        this._addressInputElement.value = '';
+        
+        this.setDisabled(this._formSubmitButtonElement, true);
+    }
+
     private _changeAddress = (): void => {
-        this.orderModel.addAddress(this._addressInputElement.value);
+        this._orderModel.addAddress(this._addressInputElement.value);
         this._validateForm();
     }
 
     private _changePaymentMethod(payment: OrderPayment): void {
-        this.orderModel.addPayment(payment);
+        this._orderModel.addPayment(payment);
         
         if (payment === 'online') {
             this._cardOnlineBtnElement.classList.add('button_alt-active');
@@ -57,15 +64,15 @@ export class Order extends Component<IOrder> {
     
     private _renderDisableStatusButton(): void {
         const { validPayment, validAddress } = this._getValidForm();
-        
-        this._formSubmitButtonElement.disabled = !validPayment || !validAddress;
+
+        this.setDisabled(this._formSubmitButtonElement, !validPayment || !validAddress);
     }
     
     private _validateForm(): void {
         const { validPayment, validAddress } = this._getValidForm();
 
-        const errorPaymentText = 'Необходимо выбрать статус оплаты';
-        const errorAdressText = 'Необходимо указать адрес';
+        const errorPaymentText = '-> Необходимо выбрать статус оплаты';
+        const errorAdressText = '-> Необходимо указать адрес';
         
         this._formErrorsElement.innerHTML = `
         ${!validPayment ? errorPaymentText : ''}

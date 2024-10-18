@@ -21,7 +21,6 @@ export abstract class Component<T> {
             if (state) element.setAttribute('disabled', 'disabled');
             else element.removeAttribute('disabled');
         }
-        console.log(element, state);
     }
 
     // Скрыть
@@ -37,7 +36,7 @@ export abstract class Component<T> {
     // Установить изображение с алтернативным текстом
     protected setImage(element: HTMLImageElement, src: string, alt?: string) {
         if (element) {
-            element.src = src;
+            element.src = `./images${src}`;
             if (alt) {
                 element.alt = alt;
             }

@@ -18,10 +18,10 @@ export class ModalProduct extends Modal{
         super(container, events);
     }
 
-    override open(data: IItemAPI): void {
-        this._render(data)
-        super.open();
-    }
+    // override open(data: IItemAPI): void {
+    //     this._render(data)
+    //     super.open();
+    // }
 
     private _handleClick(data: IItemAPI): void {
         if (this.basketModel.has(data.id)) {

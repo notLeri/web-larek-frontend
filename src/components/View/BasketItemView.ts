@@ -1,10 +1,7 @@
+import { IBasketItemView } from "../../types/view";
 import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
 import { EventEmitter } from "../base/events";
-
-interface IBasketItemView {
-
-}
 
 export class BasketItem extends Component<IBasketItemView> {
     private cardIndex: HTMLSpanElement;
@@ -36,8 +33,8 @@ export class BasketItem extends Component<IBasketItemView> {
         this.cardTitle.textContent = `${title}`;
     }
 
-    set price(price: number) {
-        this.cardPrice.textContent = `${price}`;
+    set price(price: string) {
+        this.cardPrice.textContent = price;
     }
 
     private _emitDeletion(id: string): void {

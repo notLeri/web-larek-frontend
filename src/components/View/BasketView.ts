@@ -1,4 +1,5 @@
 import { IItemAPI } from '../../types';
+import { IBasket } from '../../types/view';
 import { cloneTemplate, ensureElement } from '../../utils/utils';
 import { Component } from '../base/Component';
 import { EventEmitter } from '../base/events';
@@ -6,13 +7,8 @@ import { BasketModel } from '../model/BasketModel';
 import { OrderModel } from '../model/OrderModel';
 import { BasketItem } from './BasketItemView';
 
-export interface IBasket {
-
-}
-
 export class Basket extends Component<IBasket> {
     private cardBasket: HTMLTemplateElement;
-    private _basketElement: HTMLElement;
     private _basketList: HTMLElement;
     private _basketSubmitButton: HTMLButtonElement;
     private _basketPriceElement: HTMLElement;
@@ -45,12 +41,6 @@ export class Basket extends Component<IBasket> {
         basketList.forEach(node => this._basketList.appendChild(node));
         this.setDisabled(this._basketSubmitButton, this._basketModel.price === 0);
     } 
-
-    // get list(): HTMLElement[] {
-    //     // this._renderProductList();
-    //     this._changed();
-    //     return Array.from(this._basketList.children);
-    // }
     
     set price(value: number) {
         this._basketPriceElement.textContent = `${value} синапсов`;
@@ -64,64 +54,5 @@ export class Basket extends Component<IBasket> {
     private _emitOrder(): void {
         this.events.emit('modalOrder:open');
         this._orderModel.addItems(this._basketModel.productsID, this._basketModel.price);
-    }
-
-    // override open(): void {
-    //     this._render();
-    //     super.open();
-    // }
-
-    // render(): HTMLElement {
-    //     return super.render();
-
-    //     // this._renderProductList();
-    // }   
-    
-    // private _renderProductList(): void {
-    //     this._basketList.textContent = '';
-        
-    //     const fullProducts = this._basketModel.fullProductsArr;
-        
-    //     for (let i = 0; i < fullProducts.length; i++) {
-    //         this._renderProduct(i + 1, fullProducts[i]);
-    //     }
-    //     this._renderBasketPrice();
-    //     this._changed();
-    // }
-
-    // private _renderProduct(index: number, productData: IItemAPI): void {
-    //     const basketItem = cloneTemplate('#card-basket');
-
-    //     const cardIndex = basketItem.querySelector('.basket__item-index');
-    //     const cardTitle = basketItem.querySelector('.card__title');
-    //     const cardPrice = basketItem.querySelector('.card__price');
-    //     const cardDelete = basketItem.querySelector('.basket__item-delete');
-    //     const price = productData.price === null ? 'Бесценно' : `${productData.price} синапсов`;
-
-    //     cardIndex.textContent = `${index}`;
-    //     cardTitle.textContent = productData.title;
-    //     cardPrice.textContent = `${price}`;
-        
-    //     cardDelete.addEventListener('click', () => this._handleDeleteItem(productData.id))
-    //     this._basketList.appendChild(basketItem);
-    // }
-
-    // private _renderBasketPrice(): void {
-    //     this._basketPriceElement.textContent = `${this._basketModel.price} синапсов`;
-    // }
-
-    // private _handleDeleteItem = (id: string): void => {
-    //     this._basketModel.remove(id);
-    //     this._renderProductList();
-    // }
-
-    // private _placeOrder = (): void => {
-    //     this.events.emit('modalOrder:open');
-    //     this._orderModel.addItems(this._basketModel.productsID, this._basketModel.price);
-    // }
-
-    private _changed(): void {
-
-        this.setDisabled(this._basketSubmitButton, this._basketModel.price === 0);
     }
 }

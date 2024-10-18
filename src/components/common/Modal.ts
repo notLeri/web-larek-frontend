@@ -36,7 +36,7 @@ export class Modal extends Component<IModalData> {
         this.children.replaceChildren(value);
     }
 
-    open(ApiItem?: IItemAPI) {
+    open() {
         this.container.classList.add("modal_active");
         document.addEventListener("keyup", this.handleEscUp);
     }
@@ -44,6 +44,7 @@ export class Modal extends Component<IModalData> {
     close() {
         this.container.classList.remove("modal_active");
         document.removeEventListener("keyup", this.handleEscUp);
+        this.events.emit('modal:close');
     }
   
     handleEscUp (evt: KeyboardEvent) {
@@ -56,5 +57,9 @@ export class Modal extends Component<IModalData> {
         super.render(data);
         this.open();
         return this.container;
+    }
+
+    isOpen(): boolean {
+        return this.container.classList.contains("modal_active");
     }
 }
