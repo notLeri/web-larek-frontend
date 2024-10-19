@@ -140,15 +140,21 @@ export class AppPresenter {
             this._contacts.resetInputs();
         });
 
-        this._events.on('modalConfirm:open', () => {
-            this._api.order(this._orderModel.order)
-                .then((res) => {
-                    console.log(res)
-                });
-
+        this._events.on('modalConfirmSuccess:open', () => {
             this._modal.render({
                 content: this._confirmSuccess.render({ price: this._orderModel.price })
             });
+        });
+
+        this._events.on('sendOrder', () => {
+            this._api.order(this._orderModel.order)
+                .then((res) => {
+                    this._events.emit('modalConfirmSuccess:open');
+                    console.log(res);
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
         });
 
         this._events.on('initialData:loaded', () => {

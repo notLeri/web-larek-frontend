@@ -10,19 +10,23 @@ export class Contacts extends Component<IForm> {
     private _formSubmitButtonElement: HTMLButtonElement;
     private _formErrorsElement: HTMLSpanElement;
     
-    constructor(container: HTMLElement, events: EventEmitter, private readonly orderModel: OrderModel) {
+    constructor(
+        container: HTMLElement,
+        events: EventEmitter,
+        private orderModel: OrderModel
+    ) {
         super(container, events);
 
         this._formInputEmailElement = ensureElement<HTMLInputElement>('.form__input[name=email]', this.container);
         this._formInputPhoneElement = ensureElement<HTMLInputElement>('.form__input[name=phone]', this.container);
         this._formSubmitButtonElement = ensureElement<HTMLButtonElement>('.button[type=submit]', this.container);
         this._formErrorsElement = ensureElement<HTMLSpanElement>('.form__errors', this.container);
-
-        this._validateForm();
         
         this._formInputEmailElement.addEventListener('input', this._changeEmail);
         this._formInputPhoneElement.addEventListener('input', this._changePhone);
         this.container.addEventListener('submit', this._submitForm);
+        
+        this._validateForm();
     }
 
     public resetInputs(): void {
@@ -72,6 +76,6 @@ export class Contacts extends Component<IForm> {
 
     private _submitForm = (event: Event): void => {
         event.preventDefault();
-        this.events.emit('modalConfirm:open');
+        this.events.emit('sendOrder');
     }
 }

@@ -11,12 +11,14 @@ export class Order extends Component<IForm> {
     private _addressInputElement: HTMLInputElement;
     private _formSubmitButtonElement: HTMLButtonElement;
     private _formErrorsElement: HTMLSpanElement;
-    private _orderModel: OrderModel;
 
-    constructor(container: HTMLElement, events: EventEmitter, orderModel: OrderModel) {
+    constructor(
+        container: HTMLElement,
+        events: EventEmitter,
+        private _orderModel: OrderModel
+    ) {
         super(container, events);
 
-        this._orderModel = orderModel;
         this._cardOnlineBtnElement = ensureElement<HTMLButtonElement>('[name=card]', this.container);
         this._cashOfflineBtnElement = ensureElement<HTMLButtonElement>('[name=cash]', this.container);
         this._addressInputElement = ensureElement<HTMLInputElement>('[name=address]', this.container);

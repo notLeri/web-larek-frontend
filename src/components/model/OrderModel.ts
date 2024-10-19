@@ -14,27 +14,22 @@ export class OrderModel implements IOrderModel {
     public addItems(itemIDs: string[], price: number): void {
         this._items = itemIDs;
         this._totalPrice = price;
-        this._changed();
     }
 
     public addPayment(payment: OrderPayment): void {
         this._payment = payment;
-        this._changed();
     }
 
     public addAddress(address: string): void {
         this._address = address;
-        this._changed();
     }
 
     public addEmail(email: string): void {
         this._email = email;
-        this._changed();
     }
 
     public addPhone(phone: string): void {
         this._phone = phone;
-        this._changed();
     }
 
     get order(): IOrder {
@@ -59,11 +54,5 @@ export class OrderModel implements IOrderModel {
         this._address = null;
         this._items = [];
         this._totalPrice = 0;
-
-        this._changed();
-    }
-
-    private _changed() {
-        // console.log(JSON.parse(JSON.stringify(this)));
     }
 }

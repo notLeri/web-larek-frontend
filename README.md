@@ -47,7 +47,7 @@ yarn build
 Список товаров приходящих с сервера API.
 
 ```
-export interface IListAPI {
+interface IListAPI {
     total: number;
     items: IItemAPI[];
 }
@@ -56,7 +56,7 @@ export interface IListAPI {
 Сам товар приходящий с сервера API.
 
 ```
-export interface IItemAPI {
+interface IItemAPI {
     id: string;
     description: string;
     image: string;
@@ -69,7 +69,7 @@ export interface IItemAPI {
 Заказ отправляемый на сервер.
 
 ```
-export interface IOrder {
+interface IOrder {
     payment: OrderPayment,
     email: string,
     phone: string,
@@ -82,8 +82,7 @@ export interface IOrder {
 Модель каталога, отвечающая за работу с данными списка продуктов на главном экране.
 
 ```
-export interface ICatalogModel {
-    items: IItemAPI[];
+interface ICatalogModel {
     setItems(items: IItemAPI[]): void;
     getProduct(id: string): IItemAPI | null;
 }
@@ -92,7 +91,7 @@ export interface ICatalogModel {
 Модель корзины, отвечающая за работу с данными внутри корзины.
 
 ```
-export interface IBasketModel<T = string> {
+interface IBasketModel<T = string> {
     add(item: T): void;
     remove(item: T): void;
     has(item: T): boolean;
@@ -103,7 +102,7 @@ export interface IBasketModel<T = string> {
 Модель заказа, для работы с данными о заказе, в процессе его оформления.
 
 ```
-export interface IOrderModel {
+interface IOrderModel {
     addItems: (items: string[], price: number) => void;
     addPayment: (payment: OrderPayment) => void;
     addEmail: (email: string) => void;
@@ -114,31 +113,84 @@ export interface IOrderModel {
 }
 ```
 
-Класс для исполнения функций самого модального окна.
+Интерфейс компонента для исполнения функций самого модального окна.
 
 ```
-export interface IModal {
-    open(id?: string): void;
+interface IModal {
+    content: HTMLElement;
+    open(ApiItem?: IItemAPI): void;
     close(): void;
     handleEscUp (evt: KeyboardEvent): void;
+    isOpen(): boolean;
+    render(data?: Partial<IModal>): HTMLElement;
+}
+```
+
+Интерфейс компонента товара в списке главного меню.
+
+```
+export interface ICatalogItemView {
+    item: IItemAPI;
+}
+```
+
+Интерфейс компонента контента продукта в модальном окне.
+
+```
+export interface IProductPreview {
+    data: IItemAPI;
+}
+```
+
+Интерфейс компонента контента корзины в модальном окне.
+
+```
+export interface IBasket {
+    list: IItemAPI[];
+    price: number;
+}
+```
+
+Интерфейс компонента контента товара корзины в модальном окне.
+
+```
+export interface IBasketItemView {
+    id: string;
+    index: number;
+    title: string;
+    price: string;
+}
+```
+
+Интерфейс компонента контента формы в модальном окне.
+```
+export interface IForm {
+    resetInputs(): void;
+}
+```
+
+Интерфейс компонента контента подтверждения в случае успеха, в модальном окне.
+```
+export interface IConfirmSuccess {
+    price: number;
 }
 ```
 
 Класс для исполнения функций корзины.
 
 ```
-export interface IBasket {
-    getItems: () => IBasketItem[];
-    add: (id: string) => void;
-    remove: (id: string) => void;
-    clear: () => void;
+interface IBasketModel {
+    add(item: T): void;
+    remove(item: T): void;
+    has(item: T): boolean;
+    get products(): Map<string, number>;
 }
 ```
 
 Интерфейс товара отображаемого в каталоге.
 
 ```
-export interface ICatalogItem {
+interface ICatalogItem {
     id: string;
     image: string;
     title: string;
@@ -150,7 +202,7 @@ export interface ICatalogItem {
 Интерфейс товара отображаемого в корзине.
 
 ```
-export interface IBasketItem {
+interface IBasketItem {
     id: string;
     title: string;
     price: number;
@@ -160,7 +212,7 @@ export interface IBasketItem {
 Ответ с сервера в случае успешного запрошенного заказа.
 
 ```
-export type SuccessResult =  {
+type SuccessResult =  {
     id: string,
     total: number
 }
@@ -169,7 +221,7 @@ export type SuccessResult =  {
 Ответ с сервера в случае неудачно запрошенного заказа.
 
 ```
-export type ErrorResult = {
+type ErrorResult = {
     error: string
 }
 ```
@@ -177,7 +229,7 @@ export type ErrorResult = {
 Интерфейс заполняемых данных с модального окна (метод оплаты и адрес доставки).
 
 ```
-export interface IOrderFormPaymentAddress {
+interface IOrderFormPaymentAddress {
     payment: OrderPayment;
     address: string;
 }
@@ -186,7 +238,7 @@ export interface IOrderFormPaymentAddress {
 Интерфейс заполняемых данных с модального окна (электронная почта и телефон).
 
 ```
-export interface IOrderFormMailPhone {
+interface IOrderFormMailPhone {
     email: string;
     phone: string;
 }
@@ -195,7 +247,7 @@ export interface IOrderFormMailPhone {
 Категории товара.
 
 ```
-export type TCategory = 'софт-скил' | 'другое' | 'дополнительное' | 'кнопка' | 'хард-скил';
+type TCategory = 'софт-скил' | 'другое' | 'дополнительное' | 'кнопка' | 'хард-скил';
 ```
 
 ## Архитектура приложения
@@ -226,13 +278,26 @@ export type TCategory = 'софт-скил' | 'другое' | 'дополнит
 - `emit` - инициализация события
 - `trigger` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие   
 
+#### Класс Component
+Представляет собой основу компонентов отображения предоставляя небольшой готовый функционал.\
+Принимает самый верхний элемент всей ноды, для дальнейшей работы с его детьми, и брокер событий.\
+
+Защищённые методы:
+- toggleClass(element: HTMLElement, className: string, force?: boolean) - переключение класса.
+- setText(element: HTMLElement, value: unknown) - установка значения текста элементу.
+- setDisabled(element: HTMLElement, state: boolean) - установить значение disabled для элемента.
+- setHidden(element: HTMLElement) - установить значение display -> none.
+- setVisible(element: HTMLElement) - убрать свойство display.
+- setImage(element: HTMLImageElement, src: string, alt?: string) - назначение src и alt для изображения.
+- render(data?: Partial<T>): HTMLElement - рендер всего компонента с вписыванием данных в него.
+
 ### Презентер приложения
 
 #### Класс AppPresenter
 Класс представляет собой всё приложение магазина, выполняя роль презентера.\
 
 Поля класса:
-Все модели приложения и модальные окна, а также api и EventEmitter.
+Все модели приложения и компоненты представления, а также api и EventEmitter.
 - _nodes: HTMLElement{} - объект HTML элементов и HTML шаблонов для отображения.
 - _initedController: boolean - свойство хранящее в себе значение запускалось ли приложение, чтобы не запустить его дважды.
 
@@ -297,76 +362,101 @@ export type TCategory = 'софт-скил' | 'другое' | 'дополнит
 ### Классы представления
 
 #### Класс Modal
-Реализует модальное окно. Так же предоставляет методы `open` и `close` для управления отображением модального окна. Устанавливает слушатели на клавиатуру, для закрытия модального окна по Esc, на клик в оверлей и кнопку-крестик для закрытия попапа.  
-- constructor(selector: string, events: IEvents) Конструктор принимает селектор, по которому в разметке страницы будет идентифицировано модальное окно и экземпляр класса `EventEmitter` для возможности инициации событий.
+Расширяет класс Component. Предназначен для реализации модального окна.
+Так же предоставляет методы `open` и `close` для управления отображением модального окна. Устанавливает слушатели на клавиатуру, для закрытия модального окна по Esc, на клик в оверлей и кнопку-крестик для закрытия попапа.  
+- constructor(selector: string, events: EventEmitter) Конструктор принимает селектор, по которому в разметке страницы будет идентифицировано модальное окно и экземпляр класса `EventEmitter` для возможности инициации событий.
 
 Поля класса:
-- modal: HTMLElement - элемент модального окна
-- events: IEvents - брокер событий
-
-#### Класс ModalProduct
-Расширяет класс Modal. Предназначен для реализации модального окна целого товара. Сохраняет полученный в параметрах обработчик событий и модель корзины для работы с данными корзины.\
-
-Поля класса:
-- _titleElement: HTMLHeadingElement; - Название товара.
-- _priceElement: HTMLSpanElement; - Цена товара.
-- _categoryElement: HTMLElement; - Категория товара.
-- _imageElement: HTMLImageElement; - Изображение товара.
-- _descriptionElement: HTMLElement; - Описание товара.
-- _buttonElement: HTMLButtonElement; - Кнопка купить/убрать из корзины.
-- _cardFullElement: HTMLElement; - шаблон товара.
+- events: EventEmitter - брокер событий.
+- container: HTMLElement - само модальное окно.
+- contentContainer: HTMLElement - контейнер для контента модального окна.
 
 Методы:
-- open(data: IItemAPI): void - перезаписанное открытие модального окна с отображением.
+- set content(value: HTMLElement) - сеттер для вставки элементов в контент модального окна.
+- open() - открывает модальное окно.
+- close() - закрывает модальное окно.
+- handleEscUp(evt: KeyboardEvent) - callback для закрытия модального окна на ESC.
+- isOpen(): boolean - проверяет имеет ли класс активного модального окна.
+- override render(data?: Partial<IModal>): HTMLElement - отдаёт контейнер компонента и ставит класс активного окна.
+
+#### Класс ProductPreview
+Расширяет класс Component. Предназначен для реализации контента модального окна целого товара.\
+Сохраняет копию шаблона соответствующего элемента и полученный в параметрах обработчик событий и модель корзины для работы с данными корзины.\
+
+Поля класса:
+- _data: IItemAPI - общие данные о данном товаре.
+- _titleElement: HTMLHeadingElement; - Название товара.
+- _priceElement: HTMLSpanElement; - Цена товара.
+- _categoryElement: HTMLSpanElement; - Категория товара.
+- _imageElement: HTMLImageElement; - Изображение товара.
+- _descriptionElement: HTMLParagraphElement; - Описание товара.
+- _buttonElement: HTMLButtonElement; - Кнопка купить/убрать из корзины.
+- _basketModel: BasketModel - модель данных корзины.
+
+Методы:
+- set data(data: IItemAPI) - сеттер данных о товаре.
 - _handleClick(data: IItemAPI): void - функция клика, которая добавляет товар или удаляет из модели корзины данный товар.
-- _render(data: IItemAPI): void - общее отображение товара.
+- _renderItem(data: IItemAPI): void - заполнение шаблона товара.
 - _renderButtonText(data: IItemAPI): void - отображает ту надпись на кнопке в зависимости от пребывания товара в корзине.
 
-#### Класс ModalBasket
-Расширяет класс Modal. Предназначен для реализации окна корзины.
-Сохраняет полученный в параметрах обработчик событий, который передается для выполнения при начинании оформления заказа.
+#### Класс Basket
+Расширяет класс Component. Предназначен для реализации контента модального окна корзины.\
+Сохраняет копию шаблона соответствующего элемента и полученный в параметрах обработчик событий, который передается для начала оформления заказа.
 И принимает 2 модели: корзины и заказа, из модели корзины он получает доступ к данным хранящимся в корзине, а из заказа получает возможность записать данные первой фазы оформления заказа.\
 
 Поля класса:
-- _basketElement: HTMLElement; - шаблон корзины.
+- _cardBasket: HTMLTemplateElement - шаблон товара в корзине.
 - _basketList: HTMLElement; - элемент списка продуктов корзины.
-- _basketPriceElement: HTMLElement; - элемент общей цены корзины.
 - _basketSubmitButton: HTMLButtonElement; - элемент кнопки для дальнейшего оформления заказа.
+- _basketPriceElement: HTMLElement; - элемент общей цены корзины.
 
 Методы:
-- open(): void - перезаписанный метод модалки, который включает себя отображение.
-- _render(): void - общий рендер всей корзины.
-- _renderDisableStatusButton(): void - отображает на странице доступна ли кнопка оформления заказа или нет.
-- _renderProductList(): void - отображение листа товаров в корзине.
-- _renderProduct(index: number, productData: IItemAPI): void - отображение одного продукта из листа товаров в корзине.
-- _renderBasketPrice(): void - отображение цены всех товаров в корзине.
-- _handleDeleteItem = (id: string): void - функция удаления товара из корзины и перерендера.
-- _placeOrder = (): void - функция дальнейшего оформления заказа вместе с подачей в модель заказа данных о товарах.
+- set list(apiList: IItemAPI[]) - сеттер товаров, из полученных данных о списке в корзине, он рендерит весь список.
+- set price(value: number) - назначение общей цены корзины.
+- removeById(id: string): void - удаление товара из отображённых товаров в списке.
+- _emitOrder(): void - запуск оформления товара, добавление данных о товарах и открытие последующего окна.
 
-#### Класс ModalOrder
-Расширяет класс Modal. Реализует вторую фазу оформления покупки с введением данных о методе оплаты и адресе доставки. Сохраняет полученный в параметрах обработчик событий и модель заказа для записи данных о заказе.\
+#### Класс BasketItem
+Расширяет класс Component. Предназначен для реализации контента в списке товаров корзины модального окна.\
+Сохраняет копию шаблона соответствующего элемента и полученный в параметрах обработчик событий, который передается для начала оформления заказа.\
 
 Поля класса:
-- _formOrderElement: HTMLFormElement; - шаблон заказа.
+- _cardIndex: HTMLSpanElement - элемент indexa товара.
+- _cardTitle: HTMLSpanElement - элемент заголовка товара.
+- _cardPrice: HTMLSpanElement - элемент цены товара.
+- _cardDelete: HTMLButtonElement - элемент кнопки удаления товара.
+
+Методы:
+- set id(id: string) - сеттер, для вписания id в элемент, чтобы удалять по id.
+- set index(index: number) - сеттер, для вписания index'а в элемент.
+- set title(title: string) - сеттер, для вписания названия товара.
+- set price(price: string) - сеттер, для вписания цены о товаре.
+- _emitDeletion(id: string): void - запуск события удаления товара из корзины.
+
+
+#### Класс Order
+Расширяет класс Component. Реализует 2 фазу оформления покупки с введением данных о методе оплаты и адресе доставки.\
+Сохраняет копию шаблона соответствующего элемента и полученный в параметрах обработчик событий и модель заказа для записи данных о заказе.\
+
+Поля класса:
 - _cardOnlineBtnElement: HTMLButtonElement; - переключаемая кнопка на онлайн метод оплаты.
 - _cashOfflineBtnElement: HTMLButtonElement; переключаемая кнопка на офлайн метод оплаты.
 - _addressInputElement: HTMLInputElement; - поле ввода адреса.
 - _formSubmitButtonElement: HTMLButtonElement; - кнопка дальнешего оформления заказа.
 - _formErrorsElement: HTMLSpanElement; - поле вывода ошибок при валидации.
+- _orderModel: OrderModel - модель данных заказа.
 
 Методы:
-- open(): void - переписанное открытие модалки с отображением содержимого.
-- close(): void - переписанное закрытие модалки с обнулением всего заказа.
-- _render(): void - общее отображение содержимого.
+- resetInputs(): void - сбросить значения выбранных кнопок и полей ввода.
 - _changeAddress = (): void - ввод данных об адресе заказа.
 - _changePaymentMethod(payment: OrderPayment): void - ввод данных о методе оплаты заказа и переключение активной кнопки.
 - _renderDisableStatusButton(): void - отображение доступности кнопки дальнейшего оформления.
 - _validateForm(): void - принимает результат валидации и отображает ошибки.
 - _getValidForm(): { validPayment: boolean, validAddress: boolean} - валидирует форму 2 фазы заказа.
-- _submitForm = (event: Event): void - открывает следующую фазу оформления заказа.
+- _submitForm = (event: Event): void - запускает следующую фазу оформления заказа.
 
-#### Класс ModalContacts
-Расширяет класс Modal. Реализует 3 фазу оформления заказа (электронную почту и номер телефона). Сохраняет полученный обработчик событий и модель заказа для записи данных о заказе.\
+#### Класс Contacts
+Расширяет класс Component. Реализует 3 фазу оформления заказа (электронную почту и номер телефона). Сохраняет копию шаблона соответствующего элемента и полученный обработчик событий и модель заказа для записи данных о заказе.\
 
 Поля класса:
 - _formContactsElement: HTMLFormElement; - шаблон 3 фазы оформления.
@@ -374,11 +464,10 @@ export type TCategory = 'софт-скил' | 'другое' | 'дополнит
 - _formInputPhoneElement: HTMLInputElement; - поле ввода телефонного номера.
 - _formSubmitButtonElement: HTMLButtonElement; - кнопка отправки заказа.
 - _formErrorsElement: HTMLSpanElement; - поле вывода ошибок валидации.
+- _orderModel: OrderModel - модель данных заказа.
 
 Методы:
-- open(): void - перезаписанное открытие модального окна с рендером содержимого.
-- close(): void - перезаписанное закрытие модального окна с обнулением данных о заказе.
-- _render(): void - общий рендер содержимого формы.
+- resetInputs(): void - сбросить значения выбранных кнопок и полей ввода.
 - _renderDisableStatusButton(): void - отображение доступности кнопки для отправки заказа.
 - _validateForm(): void - принимает результат валидации и отображает ошибки.
 - _getValidForm(): { validEmail: boolean, validPhone: boolean } - валидирует форму 3 фазы заказа.
@@ -386,18 +475,15 @@ export type TCategory = 'софт-скил' | 'другое' | 'дополнит
 - _changePhone = (): void - записывает данные телефонного номера в модель заказа.
 - _submitForm = (event: Event): void - функция кнопки отправки заказа.
 
-#### Класс ModalConfirm
-Расширяет класс Modal. Представляет модальное окно подтвреждения сделанного заказа в случае успеха. Сохраняет полученный обработчик событий и модель заказа для дальнейшей отправки.\
+#### Класс ConfirmSuccess
+Расширяет класс Component. Представляет контент модального окна подтвреждения сделанного заказа в случае успеха. Сохраняет копию шаблона соответствующего элемента и полученный обработчик событий и модель заказа для дальнейшей отправки.\
 
 Поля класса:
-- _orderSuccessElement: HTMLElement; - шаблон содержимого при успешной отправке заказа.
 - _orderSuccessDescriptionElement: HTMLParagraphElement; - описание отправки заказа.
 - _orderSuccessBtnElement: HTMLButtonElement; - кнопка подтверждения.
 
 Методы:
-- open(): void - перезаписанное открытие модального окна с отображением содержимого.
-- _render(): void - общее отображение содержимого.
-- _handleClick = (): void - функция подтверждения.
+- set price(value: number) - сеттер цены заказа для описания подтверждения.
 
 ### Слой коммуникации
 
@@ -413,13 +499,15 @@ export type TCategory = 'софт-скил' | 'другое' | 'дополнит
 *Список всех событий, которые могут генерироваться в системе:*\
 *События изменения данных (генерируются классами моделями данных)*
 - `basket:change` - изменения количества товаров в корзине.
-- `ui:basket-add` - добавляющее товар в модель корзины.
-- `ui:basket-remove` - удаляющее товар в модель корзины.
+- `sendOrder` - отправка заказа на сервер.
 - `initialData:loaded` - изначальная загрузка данных и её отображение.
 
 *События, возникающие при взаимодействии пользователя с интерфейсом (генерируются классами, отвечающими за представление)*
-- `modalPreview:open` - открытие модального окна с товара.
+- `ui:basket-add` - добавляющее товар в модель корзины.
+- `ui:basket-remove` - удаляющее товар в модель корзины.
+- `modal:close` - закрывает модальное окно и сбрасывает данные о заказе.
+- `modalPreview:open` - открытие модального окна товара.
 - `modalBasket:open` - открытие модального окна с корзиной.
-- `modalOrder:open` - открытие модального окна с формой заполнения заказа (2 фазы).
-- `modalContacts:open` - открытие модального окна с формой заполнения заказа (3 фазы).
-
+- `modalOrder:open` - открытие модального окна с формой заполнения заказа (2 фаза).
+- `modalContacts:open` - открытие модального окна с формой заполнения заказа (3 фаза).
+- `modalConfirmSuccess:open` - открытие модального окна с подтверждением об успешном заказе.

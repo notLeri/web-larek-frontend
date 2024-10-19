@@ -28,12 +28,6 @@ export interface IBasketItem {
     price: number;
 }
 
-export interface IModal {
-    open(ApiItem?: IItemAPI): void;
-    close(): void;
-    handleEscUp (evt: KeyboardEvent): void;
-}
-
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
 export interface IApi {

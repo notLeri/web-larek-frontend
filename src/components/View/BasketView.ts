@@ -8,7 +8,7 @@ import { OrderModel } from '../model/OrderModel';
 import { BasketItem } from './BasketItemView';
 
 export class Basket extends Component<IBasket> {
-    private cardBasket: HTMLTemplateElement;
+    private _cardBasket: HTMLTemplateElement;
     private _basketList: HTMLElement;
     private _basketSubmitButton: HTMLButtonElement;
     private _basketPriceElement: HTMLElement;
@@ -21,7 +21,7 @@ export class Basket extends Component<IBasket> {
     ) {
         super(container, events);
 
-        this.cardBasket = ensureElement<HTMLTemplateElement>('#card-basket')
+        this._cardBasket = ensureElement<HTMLTemplateElement>('#card-basket')
         this._basketList = ensureElement<HTMLElement>(`.basket__list`, this.container);
         this._basketSubmitButton = ensureElement<HTMLButtonElement>(`.basket__button`, this.container);
         this._basketPriceElement = ensureElement<HTMLSpanElement>(`.basket__price`, this.container);
@@ -33,7 +33,7 @@ export class Basket extends Component<IBasket> {
         this._basketList.textContent = '';
         
         const basketList = apiList.map((item, index) => {
-            const itemInstance = new BasketItem(cloneTemplate(this.cardBasket), this.events);
+            const itemInstance = new BasketItem(cloneTemplate(this._cardBasket), this.events);
             return itemInstance.render({ id: item.id, index: index + 1, title: item.title, price: item.price === null ? '0 синапсов' : `${item.price} синапсов` });
         });
 

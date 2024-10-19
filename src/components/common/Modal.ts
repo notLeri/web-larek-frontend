@@ -1,23 +1,17 @@
-import { IItemAPI } from "../../types/index";
+import { IModal } from "../../types/view";
 import { ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
 import { EventEmitter } from "../base/events";
 
-interface IModalData {
-    
-}
-
-export class Modal extends Component<IModalData> {
-    protected modal: HTMLElement;
+export class Modal extends Component<IModal> {
     protected events: EventEmitter;
     protected contentContainer: HTMLElement;
     protected container: HTMLElement;
-    protected children: HTMLElement;
 
     constructor(container: HTMLElement, events: EventEmitter) {
         super(container, events);
 
-        this.children = ensureElement<HTMLElement>('.modal__content', container);
+        this.contentContainer = ensureElement<HTMLElement>('.modal__content', container);
         this.container = container;
         this.events = events;
         const closeButtonElement = this.container.querySelector(".modal__close");
@@ -28,38 +22,36 @@ export class Modal extends Component<IModalData> {
             }
         });
         this.handleEscUp = this.handleEscUp.bind(this);
-
-       this.contentContainer = this.container.querySelector('.modal__content');
     }
   
     set content(value: HTMLElement) {
-        this.children.replaceChildren(value);
+        this.contentContainer.replaceChildren(value);
     }
 
-    open() {
+    open(): void {
         this.container.classList.add("modal_active");
         document.addEventListener("keyup", this.handleEscUp);
     }
   
-    close() {
+    close(): void {
         this.container.classList.remove("modal_active");
         document.removeEventListener("keyup", this.handleEscUp);
         this.events.emit('modal:close');
     }
   
-    handleEscUp (evt: KeyboardEvent) {
+    handleEscUp(evt: KeyboardEvent) {
         if (evt.key === "Escape") {
           this.close();
         }
     };
-
-    render(data?: IModalData): HTMLElement {
+    
+    isOpen(): boolean {
+        return this.container.classList.contains("modal_active");
+    }
+    
+    override render(data?: Partial<IModal>): HTMLElement {
         super.render(data);
         this.open();
         return this.container;
-    }
-
-    isOpen(): boolean {
-        return this.container.classList.contains("modal_active");
     }
 }
