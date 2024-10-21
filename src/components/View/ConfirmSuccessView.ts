@@ -20,6 +20,6 @@ export class ConfirmSuccess extends Component<IConfirmSuccess> {
     }
 
     set price(value: number) {
-        this._orderSuccessDescriptionElement.textContent = `Списано ${value} синапсов`;
+        this.setText(this._orderSuccessDescriptionElement, `Списано ${value} синапсов`);
     }
 }

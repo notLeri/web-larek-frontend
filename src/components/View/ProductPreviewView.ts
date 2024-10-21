@@ -51,11 +51,19 @@ export class ProductPreview extends Component<IProductPreview> {
         this.setText(this._titleElement, data.title);
         this.setText(this._descriptionElement, data.description);
         this.setText(this._priceElement, data.price ===  null ? 'Бесценно' : `${data.price} синапсов`);
+        
+        const categoryClasses = Object.values(categoryCSSClasses);
+        const categoryCSSClass = categoryCSSClasses[data.category];
 
-        this._categoryElement.classList.remove('card__category_other');
-        const categoryCSSClass = categoryCSSClasses[data.category]
-        this._categoryElement.classList.add(categoryCSSClass);
-
+        for (const className of this._categoryElement.classList) {
+            if (categoryClasses.includes(className)) {
+                this._categoryElement.classList.remove(className);
+            }
+        }
+        if (categoryCSSClass) {
+            this.toggleClass(this._categoryElement, categoryCSSClass, true);
+        }
+        
         this._renderButtonText(data);
         if (data.price === null) {
             this.setDisabled(this._buttonElement, true);
@@ -67,7 +75,7 @@ export class ProductPreview extends Component<IProductPreview> {
 
     private _renderButtonText(data: IItemAPI): void {
         if (!this._basketModel.has(data.id)) {
-            this._buttonElement.textContent = "Купить";
+            this.setText(this._buttonElement, "Купить");
             this.setText(this._buttonElement, "Купить");
         } else {
             this.setText(this._buttonElement, "Убрать");

@@ -27,29 +27,28 @@ export class CatalogItemView extends Component<ICatalogItemView> {
 
     set item(data: IItemAPI) {
         this._id = data.id;
-        this._title.textContent = data.title;
-        this._category.textContent = data.category;
-        this._category.classList.remove('card__category_soft');
+        this.setText(this._title, data.title);
+        this.setText(this._category, data.category);
 
         switch (data.category) {
             case 'софт-скил': {
-                this._category.classList.add('card__category_soft');
+                this.toggleClass(this._category, 'card__category_soft');
                 break;
             }
             case 'другое': { 
-                this._category.classList.add('card__category_other');
+                this.toggleClass(this._category, 'card__category_other');
                 break;
             }
             case 'дополнительное': {
-                this._category.classList.add('card__category_additional');
+                this.toggleClass(this._category, 'card__category_additional');
                 break;
             }
             case 'кнопка': {
-                this._category.classList.add('card__category_button');
+                this.toggleClass(this._category, 'card__category_button');
                 break;
             }
             case 'хард-скил': {
-                this._category.classList.add('card__category_hard');
+                this.toggleClass(this._category, 'card__category_hard');
                 break;
             }
         }
@@ -57,6 +56,6 @@ export class CatalogItemView extends Component<ICatalogItemView> {
         this._image.src = `./images${data.image}`;
 
         const price = data.price === null ? 'Бесценно' : `${data.price} синапсов`;
-        this._price.textContent = `${price}`;
+        this.setText(this._price, price);
     }
 }

@@ -1,16 +1,13 @@
 import { OrderPayment } from "../../types/order";
-import { IForm } from "../../types/view";
 import { ensureElement } from "../../utils/utils";
-import { Component } from "../base/Component";
 import { EventEmitter } from "../base/events";
+import { Form } from "../base/Form";
 import { OrderModel } from "../model/OrderModel";
 
-export class Order extends Component<IForm> {
+export class Order extends Form {
     private _cardOnlineBtnElement: HTMLButtonElement;
     private _cashOfflineBtnElement: HTMLButtonElement;
     private _addressInputElement: HTMLInputElement;
-    private _formSubmitButtonElement: HTMLButtonElement;
-    private _formErrorsElement: HTMLSpanElement;
 
     constructor(
         container: HTMLElement,
@@ -22,8 +19,6 @@ export class Order extends Component<IForm> {
         this._cardOnlineBtnElement = ensureElement<HTMLButtonElement>('[name=card]', this.container);
         this._cashOfflineBtnElement = ensureElement<HTMLButtonElement>('[name=cash]', this.container);
         this._addressInputElement = ensureElement<HTMLInputElement>('[name=address]', this.container);
-        this._formSubmitButtonElement = ensureElement<HTMLButtonElement>('.order__button', this.container);
-        this._formErrorsElement = ensureElement<HTMLSpanElement>('.form__errors', this.container);
 
         this._cardOnlineBtnElement.addEventListener('click', () => this._changePaymentMethod('online'));
         this._cashOfflineBtnElement.addEventListener('click', () => this._changePaymentMethod('offline'));

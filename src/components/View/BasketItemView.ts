@@ -26,15 +26,15 @@ export class BasketItem extends Component<IBasketItemView> {
     }
 
     set index(index: number) {
-        this._cardIndex.textContent = `${index}`;
+        this.setText(this._cardIndex, index);
     }
 
     set title(title: string) {
-        this._cardTitle.textContent = `${title}`;
+        this.setText(this._cardTitle, title);
     }
 
     set price(price: string) {
-        this._cardPrice.textContent = price;
+        this.setText(this._cardPrice, price);
     }
 
     private _emitDeletion(id: string): void {

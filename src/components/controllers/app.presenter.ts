@@ -2,7 +2,7 @@ import { API_URL, settings } from "../../utils/constants";
 import { cloneTemplate, ensureElement } from "../../utils/utils";
 import { Api } from "../base/api";
 import { EventEmitter } from "../base/events";
-import { AppApi } from "../model/AppApi";
+import { AppApi } from "../data/AppApi";
 import { BasketModel } from "../model/BasketModel";
 import { CatalogModel } from "../model/CatalogModel";
 import { CatalogItemView } from "../View/CatalogItemView";
@@ -175,6 +175,6 @@ export class AppPresenter {
                 this._catalogModel.setItems(list.items);
                 this._events.emit('initialData:loaded');
             })
-            .catch(err => console.error(err));
+            .catch(console.error);
     };
 }

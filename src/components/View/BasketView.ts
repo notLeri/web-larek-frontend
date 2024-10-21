@@ -30,20 +30,20 @@ export class Basket extends Component<IBasket> {
     }
 
     set list(apiList: IItemAPI[]) {
-        this._basketList.textContent = '';
+        this.setText(this._basketList, '');
         
         const basketList = apiList.map((item, index) => {
             const itemInstance = new BasketItem(cloneTemplate(this._cardBasket), this.events);
             return itemInstance.render({ id: item.id, index: index + 1, title: item.title, price: item.price === null ? '0 синапсов' : `${item.price} синапсов` });
         });
 
-        this._basketPriceElement.textContent =  this._basketModel.price === null ? 'Бесценно' : `${this._basketModel.price} синапсов`;
+        this.setText(this._basketPriceElement, this._basketModel.price === null ? 'Бесценно' : `${this._basketModel.price} синапсов`);
         basketList.forEach(node => this._basketList.appendChild(node));
         this.setDisabled(this._basketSubmitButton, this._basketModel.price === 0);
     } 
     
     set price(value: number) {
-        this._basketPriceElement.textContent = `${value} синапсов`;
+        this.setText(this._basketPriceElement, `${value} синапсов`);
     }
 
     public removeById(id: string): void {

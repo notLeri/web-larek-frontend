@@ -1,7 +1,7 @@
 import { EventEmitter } from "./events";
 
 export abstract class Component<T> {
-    constructor(protected readonly container: HTMLElement, protected events: EventEmitter) {}
+    constructor(protected container: HTMLElement, protected events: EventEmitter) {}
 
     // Переключить класс
     protected toggleClass(element: HTMLElement, className: string, force?: boolean) {

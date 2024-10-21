@@ -1,14 +1,11 @@
-import { IForm } from "../../types/view";
 import { ensureElement } from "../../utils/utils";
-import { Component } from "../base/Component";
 import { EventEmitter } from "../base/events";
+import { Form } from "../base/Form";
 import { OrderModel } from "../model/OrderModel";
 
-export class Contacts extends Component<IForm> {
+export class Contacts extends Form {
     private _formInputEmailElement: HTMLInputElement;
     private _formInputPhoneElement: HTMLInputElement;
-    private _formSubmitButtonElement: HTMLButtonElement;
-    private _formErrorsElement: HTMLSpanElement;
     
     constructor(
         container: HTMLElement,
@@ -19,8 +16,6 @@ export class Contacts extends Component<IForm> {
 
         this._formInputEmailElement = ensureElement<HTMLInputElement>('.form__input[name=email]', this.container);
         this._formInputPhoneElement = ensureElement<HTMLInputElement>('.form__input[name=phone]', this.container);
-        this._formSubmitButtonElement = ensureElement<HTMLButtonElement>('.button[type=submit]', this.container);
-        this._formErrorsElement = ensureElement<HTMLSpanElement>('.form__errors', this.container);
         
         this._formInputEmailElement.addEventListener('input', this._changeEmail);
         this._formInputPhoneElement.addEventListener('input', this._changePhone);
@@ -39,7 +34,7 @@ export class Contacts extends Component<IForm> {
     private _renderDisableStatusButton(): void {
         const { validEmail, validPhone } = this._getValidForm();
 
-        this._formSubmitButtonElement.disabled = !validEmail || !validPhone;
+        this.setDisabled(this._formSubmitButtonElement, !validEmail || !validPhone);
     }
     
     private _validateForm(): void {
