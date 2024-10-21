@@ -57,7 +57,7 @@ export class ProductPreview extends Component<IProductPreview> {
 
         for (const className of this._categoryElement.classList) {
             if (categoryClasses.includes(className)) {
-                this._categoryElement.classList.remove(className);
+                this.toggleClass(this._categoryElement, className, false);
             }
         }
         if (categoryCSSClass) {

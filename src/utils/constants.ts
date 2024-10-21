@@ -15,3 +15,11 @@ export const categoryCSSClasses = {
     'кнопка': 'card__category_button',
     'хард-скил': 'card__category_hard',
 }
+
+export const categoryColor = <Record<string, string>> {
+    "софт-скил": "soft",
+    "другое": "other",
+    "дополнительное": "additional",
+    "кнопка": "button",
+    "хард-скил": "hard"
+  }

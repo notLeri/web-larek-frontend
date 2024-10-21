@@ -30,10 +30,10 @@ export class Order extends Form {
 
     public resetInputs(): void {
         if (this._cardOnlineBtnElement.classList.contains('button_alt-active')) {
-            this._cardOnlineBtnElement.classList.remove('button_alt-active');
+            this.toggleClass(this._cardOnlineBtnElement, 'button_alt-active', false);
         }
         if (this._cashOfflineBtnElement.classList.contains('button_alt-active')) {
-            this._cashOfflineBtnElement.classList.remove('button_alt-active');
+            this.toggleClass(this._cashOfflineBtnElement, 'button_alt-active', false);
         }
         this._addressInputElement.value = '';
         
@@ -49,11 +49,11 @@ export class Order extends Form {
         this._orderModel.addPayment(payment);
         
         if (payment === 'online') {
-            this._cardOnlineBtnElement.classList.add('button_alt-active');
-            this._cashOfflineBtnElement.classList.remove('button_alt-active');
+            this.toggleClass(this._cardOnlineBtnElement, 'button_alt-active', true);
+            this.toggleClass(this._cashOfflineBtnElement, 'button_alt-active', false);
         } else if (payment === 'offline') {
-            this._cardOnlineBtnElement.classList.remove('button_alt-active');
-            this._cashOfflineBtnElement.classList.add('button_alt-active');
+            this.toggleClass(this._cashOfflineBtnElement, 'button_alt-active', true);
+            this.toggleClass(this._cardOnlineBtnElement, 'button_alt-active', false);
         }
 
         this._validateForm();

@@ -1,5 +1,6 @@
 import { IItemAPI } from '../../types/index';
 import { ICatalogItemView } from '../../types/view';
+import { categoryColor } from '../../utils/constants';
 import { ensureElement } from '../../utils/utils';
 import { Component } from '../base/Component';
 import { EventEmitter } from '../base/events';
@@ -29,29 +30,8 @@ export class CatalogItemView extends Component<ICatalogItemView> {
         this._id = data.id;
         this.setText(this._title, data.title);
         this.setText(this._category, data.category);
-
-        switch (data.category) {
-            case 'софт-скил': {
-                this.toggleClass(this._category, 'card__category_soft');
-                break;
-            }
-            case 'другое': { 
-                this.toggleClass(this._category, 'card__category_other');
-                break;
-            }
-            case 'дополнительное': {
-                this.toggleClass(this._category, 'card__category_additional');
-                break;
-            }
-            case 'кнопка': {
-                this.toggleClass(this._category, 'card__category_button');
-                break;
-            }
-            case 'хард-скил': {
-                this.toggleClass(this._category, 'card__category_hard');
-                break;
-            }
-        }
+        
+        this.toggleClass(this._category, `card__category_${categoryColor[data.category]}`, true)
 
         this._image.src = `./images${data.image}`;
 
